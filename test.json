@@ -1,0 +1,12 @@
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:09:26.743383","action":"login","longitude":-89.7024266723,"latitude":38.9822452812,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:09:55.897469","action":"action_9","amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:10:30.723059","action":"action_7","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:10:35.475932","action":"transaction","longitude":null,"latitude":null,"amount":183.69,"accountType":"credit_card","recipient":"5285429985"}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:11:37.261358","action":"transaction","longitude":null,"latitude":null,"amount":63.53,"accountType":"credit_card","recipient":"1063757394"}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:11:42.926267","action":"transaction","longitude":null,"latitude":null,"amount":85.56,"accountType":"savings","recipient":"6676570785"}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:11:45.687325","action":"action_7","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:11:48.922689","action":"action_4","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:11:52.005780","action":"action_2","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:11:53.778393","action":"action_2","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:12:06.058590","action":"action_9","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
+{"fraudLabel":0,"customerId":325,"sessionId":"JvvdkivJvS","timestamp":"2022-11-16 15:12:19.151577","action":"action_2","longitude":null,"latitude":null,"amount":null,"accountType":null,"recipient":null}
