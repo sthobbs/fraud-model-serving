@@ -3,46 +3,64 @@ package com.example;
 // import java.util.Arrays;
 import org.apache.beam.sdk.extensions.jackson.ParseJsons;
 import org.apache.beam.sdk.io.TextIO;
+
+// import java.io.Serializable;
+
+// import java.lang.invoke.TypeDescriptor;
+
 // import org.apache.arrow.flatbuf.Null;
 import org.apache.beam.sdk.Pipeline;
 // import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.values.PCollection;
+// import org.apache.beam.sdk.values.TypeDescriptors;
 // import org.apache.beam.sdk.transforms.Count;
 // import org.apache.beam.sdk.transforms.Filter;
 // import org.apache.beam.sdk.transforms.FlatMapElements;
 // import org.apache.beam.sdk.transforms.MapElements;
-// import org.apache.beam.sdk.values.KV;
+import org.apache.beam.sdk.values.KV;
+import org.apache.beam.sdk.transforms.Combine;
 // import org.apache.beam.sdk.values.TypeDescriptors;
-// import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.transforms.Filter;
+// import org.apache.beam.sdk.transforms.MapElements;
+import org.apache.beam.sdk.transforms.ParDo;
+import org.apache.beam.sdk.transforms.Values;
+// import org.apache.beam.sdk.transforms.WithKeys;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import com.example.config.ModelPipelineOptions;
 import com.example.storage.Event;
+import com.example.storage.Session;
+import com.example.processors.EventToKV;
+import com.example.processors.SessionCombineFn;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.beam.sdk.coders.KvCoder;
 // import java.io.Serializable;
 import org.apache.beam.sdk.coders.SerializableCoder;
+import org.apache.beam.sdk.coders.StringUtf8Coder;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
+import com.example.processors.FilterSession;
 
 
 /**
  *
  */
-public class App 
+public class App// implements Serializable
 {
 
 
-    static class eventToString extends DoFn<Event, String> {
+
+
+    static class sessionToString extends DoFn<Session, String> {
         @ProcessElement
-        public void processElement(@Element Event element, OutputReceiver<String> receiver) {
+        public void processElement(@Element Session element, OutputReceiver<String> receiver) {
             String s = element.toString();
             receiver.output(s);
         }
     }
-
 
     public static void main(String[] args) throws ConfigurationException
     {
@@ -86,23 +104,21 @@ public class App
             .setCoder(SerializableCoder.of(Event.class));
 
         // Combine events into Session
-        
+        PCollection<Session> sessions = events
+            .apply("Convert to KV<SessionId, Event> pairs",
+                ParDo.of(new EventToKV()))
+            .apply("Combine into KV<SessionId, Session> pairs",
+                Combine.<String, Event, Session>perKey(new SessionCombineFn()))
+            .apply("Extract Sessions from KV pair",
+                Values.create());
+            
 
 
-
-        //  .apply("Convert back to String", ParDo.of(new eventToString()))
-         
-        //  .apply(TextIO.write().to(options.getOutputPath()));
-
+            // sessions
+            // .apply("Convert back to String", ParDo.of(new sessionToString()))
+            // .apply(TextIO.write().to(options.getOutputPath()));
 
 
-
-//  .apply("WriteCounts", TextIO.write().to(options.getOutput()));
-        // PCollection<String> lines = p.apply(TextIO.read().from("C:/Users/hobbs/Documents/Programming/model-serving/test.txt"))
-        // p.apply(TextIO.read().from("gs://apache-beam-samples/shakespeare/kinglear.txt"))
-
-        // By default, it will write to a set of files with names like wordcounts-00001-of-00005
-        // lines.apply(TextIO.write().to("wordcounts").withNumShards(1));
 
         p.run();
 
@@ -111,32 +127,3 @@ public class App
     }
 }
 
-        // A simple Write to a local file (only runs locally):
-        // PCollection<String> lines = 
-        //     p.apply(TextIO.read().from("C:/Users/hobbs/Documents/Programming/model-serving/test.txt"));
-        
-        // lines.apply("Print",ParDo.of(new PrintElementFn()));
-        
-        // lines.apply(TextIO.write().t o("test_output"));
-
-        // // Same as above, only with Gzip compression:
-        // PCollection<String> lines = ...;
-        // lines.apply(TextIO.write().to("C:/Users/hobbs/Documents/Programming/model-serving/test.txt"))
-        //     .withSuffix(".txt"));
-
-        // String currentPath = new java.io.File(".").getCanonicalPath();
-        // System.out.println("Current dir:" + currentPath);
-
-
-
-
-
-
-
-
-    // private static class PrintElementFn extends DoFn<String,Void>{
-    //     @ProcessElement
-    //     public void processElement(@Element String input){
-    //         System.out.println(input);
-    //     }
-    // }
