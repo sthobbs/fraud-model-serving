@@ -112,7 +112,12 @@ public class App// implements Serializable
             .apply("Extract Sessions from KV pair",
                 Values.create());
             
+        // Filter out sessions without transactions
+        PCollection<Session> s = sessions
+            .apply("Filter out sessions without transactions",
+                Filter.by(new FilterSession()));
 
+        
 
             // sessions
             // .apply("Convert back to String", ParDo.of(new sessionToString()))
