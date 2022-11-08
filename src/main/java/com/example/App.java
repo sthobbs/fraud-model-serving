@@ -18,7 +18,7 @@ import org.apache.beam.sdk.values.PCollection;
 // import org.apache.beam.sdk.transforms.Filter;
 // import org.apache.beam.sdk.transforms.FlatMapElements;
 // import org.apache.beam.sdk.transforms.MapElements;
-import org.apache.beam.sdk.values.KV;
+// import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.transforms.Combine;
 // import org.apache.beam.sdk.values.TypeDescriptors;
 import org.apache.beam.sdk.transforms.DoFn;
@@ -33,16 +33,18 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import com.example.config.ModelPipelineOptions;
 import com.example.storage.Event;
 import com.example.storage.Session;
+import com.example.storage.Transaction;
 import com.example.processors.EventToKV;
 import com.example.processors.SessionCombineFn;
+import com.example.processors.SessionFilter;
+import com.example.processors.SessionToTxn;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.beam.sdk.coders.KvCoder;
+// import org.apache.beam.sdk.coders.KvCoder;
 // import java.io.Serializable;
 import org.apache.beam.sdk.coders.SerializableCoder;
-import org.apache.beam.sdk.coders.StringUtf8Coder;
+// import org.apache.beam.sdk.coders.StringUtf8Coder;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
-import com.example.processors.FilterSession;
 
 
 /**
@@ -61,6 +63,15 @@ public class App// implements Serializable
             receiver.output(s);
         }
     }
+
+    static class txnToString extends DoFn<Transaction, String> {
+        @ProcessElement
+        public void processElement(@Element Transaction element, OutputReceiver<String> receiver) {
+            String s = element.toString();
+            receiver.output(s);
+        }
+    }
+
 
     public static void main(String[] args) throws ConfigurationException
     {
@@ -113,15 +124,20 @@ public class App// implements Serializable
                 Values.create());
             
         // Filter out sessions without transactions
-        PCollection<Session> s = sessions
+        PCollection<Transaction> txns = sessions
             .apply("Filter out sessions without transactions",
-                Filter.by(new FilterSession()));
+                Filter.by(new SessionFilter()))
+            .apply("Convert Sessions to Transactions",
+                ParDo.of(new SessionToTxn()));
+        
+        // Get TxnSession sort actions
 
         
 
-            // sessions
-            // .apply("Convert back to String", ParDo.of(new sessionToString()))
-            // .apply(TextIO.write().to(options.getOutputPath()));
+        txns
+            .apply("Convert back to String",
+                ParDo.of(new txnToString()))
+            .apply(TextIO.write().to(options.getOutputPath()));
 
 
 

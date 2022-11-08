@@ -6,6 +6,7 @@ import com.example.storage.Action.ActionBuilder;
 
 import lombok.Data;
 
+// This class models the raw input data
 @Data
 public class Event implements Serializable {
     private Integer fraudLabel = null;
@@ -23,6 +24,8 @@ public class Event implements Serializable {
         return new ActionBuilder().fraudLabel(fraudLabel)
                                   .timestamp(timestamp)
                                   .action(action)
+                                  .longitude(longitude)
+                                  .latitude(latitude)
                                   .amount(amount)
                                   .accountType(accountType)
                                   .recipient(recipient)
