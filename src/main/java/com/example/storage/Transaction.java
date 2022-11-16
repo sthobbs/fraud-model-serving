@@ -9,13 +9,14 @@ import lombok.Data;
 @Data
 public class Transaction implements Serializable {
     private Integer fraudLabel;
+    private String uniqueId;
     private String customerId;
     private String sessionId;
     private String timestamp;
     private String action;
-    private Float longitude;
-    private Float latitude;
-    private Float amount;
+    private Double longitude;
+    private Double latitude;
+    private Double amount;
     private String accountType;
     private String recipient;
     private ArrayList<Action> actions; 

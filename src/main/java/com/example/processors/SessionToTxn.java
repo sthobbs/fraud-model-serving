@@ -10,6 +10,7 @@ import com.example.storage.Transaction;
 
 // Convert a Session to Transactions
 public class SessionToTxn extends DoFn<Session, Transaction> {
+    
     @ProcessElement
     public void processElement(@Element Session session, OutputReceiver<Transaction> receiver) {
         // get sorted actions
@@ -28,6 +29,7 @@ public class SessionToTxn extends DoFn<Session, Transaction> {
             
             // copy immutable fields (based on the txn action or the session)
             txn.setFraudLabel(actions.get(i).getFraudLabel());
+            txn.setUniqueId(actions.get(i).getUniqueId());
             txn.setCustomerId(session.getCustomerId());
             txn.setSessionId(session.getSessionId());
             txn.setTimestamp(actions.get(i).getTimestamp());

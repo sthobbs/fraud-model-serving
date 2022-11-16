@@ -10,16 +10,18 @@ import lombok.Data;
 @Data
 public class Action implements Serializable {
     private Integer fraudLabel;
+    private String uniqueId;
     private String timestamp;
     private String action;
-    private Float longitude;
-    private Float latitude;
-    private Float amount;
+    private Double longitude;
+    private Double latitude;
+    private Double amount;
     private String accountType;
     private String recipient;
 
     public Action clone() {
         return new ActionBuilder().fraudLabel(fraudLabel)
+                                  .uniqueId(uniqueId)
                                   .timestamp(timestamp)
                                   .action(action)
                                   .longitude(longitude)
