@@ -2,7 +2,15 @@ package com.example;
 
 // import java.util.Arrays;
 import org.apache.beam.sdk.extensions.jackson.ParseJsons;
+import org.apache.beam.sdk.io.GenerateSequence;
 import org.apache.beam.sdk.io.TextIO;
+
+// import java.io.FileNotFoundException;
+// import java.io.BufferedReader;
+// import java.io.FileReader;
+// import java.io.IOException;
+import java.util.HashMap;
+// import java.util.Map;
 
 // import java.io.Serializable;
 
@@ -13,6 +21,7 @@ import org.apache.beam.sdk.Pipeline;
 // import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionView;
 // import org.apache.beam.sdk.values.TypeDescriptors;
 // import org.apache.beam.sdk.transforms.Count;
 // import org.apache.beam.sdk.transforms.Filter;
@@ -26,18 +35,31 @@ import org.apache.beam.sdk.transforms.Filter;
 // import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.Values;
+import org.apache.beam.sdk.transforms.View;
+import org.apache.beam.sdk.transforms.windowing.AfterProcessingTime;
+import org.apache.beam.sdk.transforms.windowing.GlobalWindows;
+import org.apache.beam.sdk.transforms.windowing.Repeatedly;
+import org.apache.beam.sdk.transforms.windowing.Window;
 // import org.apache.beam.sdk.transforms.WithKeys;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.joda.time.Duration;
 
 import com.example.config.ModelPipelineOptions;
+import com.example.storage.CustInfoRecord;
 import com.example.storage.Event;
+import com.example.storage.Features;
+import com.example.storage.ProfileRecord;
 import com.example.storage.Session;
 import com.example.storage.Transaction;
+// import com.google.gson.Gson;
 import com.example.processors.EventToKV;
+import com.example.processors.LoadCustInfoSideInput;
+import com.example.processors.LoadProfileSideInput;
 import com.example.processors.SessionCombineFn;
 import com.example.processors.SessionFilter;
 import com.example.processors.SessionToTxn;
+import com.example.processors.TxnToFeatures;
 
 import org.apache.commons.configuration.ConfigurationException;
 // import org.apache.beam.sdk.coders.KvCoder;
@@ -46,6 +68,14 @@ import org.apache.beam.sdk.coders.SerializableCoder;
 // import org.apache.beam.sdk.coders.StringUtf8Coder;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 
+// import org.json.simple.JSONArray;
+// import org.json.simple.JSONObject;
+// import org.json.simple.parser.JSONParser;
+// import org.json.simple.parser.ParseException;
+// import org.json.JSONArray;
+// import org.json.JSONObject;
+// import org.json.simple.parser.JSONParser;
+// import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -72,6 +102,13 @@ public class App// implements Serializable
         }
     }
 
+    static class classToString<T> extends DoFn<T, String> {
+        @ProcessElement
+        public void processElement(@Element T element, OutputReceiver<String> receiver) {
+            String s = element.toString();
+            receiver.output(s);
+        }
+    }
 
     public static void main(String[] args) throws ConfigurationException
     {
@@ -99,19 +136,20 @@ public class App// implements Serializable
         PCollection<String> records;
         // ToDO: assert getInputType() in ("disk", "pubsub")
         if (options.getInputType().equalsIgnoreCase("disk")){
-            records = p.apply(
-                "read from disk", TextIO.read().from(options.getInputPath()));
+            records = p.apply("read from disk",
+                TextIO.read().from(options.getInputPath()));
         }
         else { // if (options.getInputType().equalsIgnoreCase("pubsub")){
-            records = p.apply(
-                "read from pubsub", PubsubIO.readStrings().fromSubscription(options.getInputPath()));
+            records = p.apply("read from pubsub",
+                PubsubIO.readStrings().fromSubscription(options.getInputPath()));
         }
 
-        // 2. ----- Transform Data -----
+        // 3. ----- Transform Data -----
 
         // Parse records into Events
         PCollection<Event> events = records
-            .apply("Parse JSON", ParseJsons.of(Event.class))
+            .apply("Parse JSON",
+                ParseJsons.of(Event.class))
             .setCoder(SerializableCoder.of(Event.class));
 
         // Combine events into Session
@@ -129,17 +167,51 @@ public class App// implements Serializable
                 Filter.by(new SessionFilter()))
             .apply("Convert Sessions to Transactions",
                 ParDo.of(new SessionToTxn()));
-        
-        // Get TxnSession sort actions
 
-        
+        // 3. ----- Side Inputs -----
 
-        txns
+        // read profile table every hour
+        PCollectionView<HashMap<String, ProfileRecord>> profileMap = p
+            .apply(GenerateSequence.from(0).withRate(1, Duration.standardHours(1L)))
+            .apply(ParDo.of(new LoadProfileSideInput()))
+            .apply(Window.<HashMap<String, ProfileRecord>>into(new GlobalWindows())
+                    .triggering(Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane()))
+                    .discardingFiredPanes())
+            .apply(View.asSingleton());
+
+        // read customer info table every hour
+        PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap = p
+            .apply(GenerateSequence.from(0).withRate(1, Duration.standardHours(1L)))
+            .apply(ParDo.of(new LoadCustInfoSideInput()))
+            .apply(Window.<HashMap<String, CustInfoRecord>>into(new GlobalWindows())
+                    .triggering(Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane()))
+                    .discardingFiredPanes())
+            .apply(View.asSingleton());
+
+        // // combine side inputs into single object
+        // HashMap<String, Object> sideInputs = new HashMap<String, Object>();
+        // sideInputs.put("profileMap", profileMap);
+        // sideInputs.put("custInfoMap", custInfoMap);
+
+        // 4. ----- Generate Features -----
+
+        // generate features that just use transactions
+        PCollection<Features> features = txns
+            .apply("Generate features from transactions",
+                ParDo.of(new TxnToFeatures(profileMap, custInfoMap))
+                     .withSideInputs(profileMap, custInfoMap));
+
+
+        // txns
+        //     .apply("Convert back to String",
+        //         ParDo.of(new txnToString()))
+        //     .apply(TextIO.write().to(options.getOutputPath()));
+
+
+        features
             .apply("Convert back to String",
-                ParDo.of(new txnToString()))
+                ParDo.of(new classToString<Features>()))
             .apply(TextIO.write().to(options.getOutputPath()));
-
-
 
         p.run();
 
