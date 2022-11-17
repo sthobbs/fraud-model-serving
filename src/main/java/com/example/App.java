@@ -50,10 +50,12 @@ import com.example.storage.CustInfoRecord;
 import com.example.storage.Event;
 import com.example.storage.Features;
 import com.example.storage.ProfileRecord;
+import com.example.storage.ScoreEvent;
 import com.example.storage.Session;
 import com.example.storage.Transaction;
 // import com.google.gson.Gson;
 import com.example.processors.EventToKV;
+import com.example.processors.FeaturesToScoreEvent;
 import com.example.processors.LoadCustInfoSideInput;
 import com.example.processors.LoadProfileSideInput;
 import com.example.processors.SessionCombineFn;
@@ -201,17 +203,22 @@ public class App// implements Serializable
                 ParDo.of(new TxnToFeatures(profileMap, custInfoMap))
                      .withSideInputs(profileMap, custInfoMap));
 
+        // 5. ----- Generate Scores -----
+        PCollection<ScoreEvent> scores = features
+            .apply("Generate score from features",
+                ParDo.of(new FeaturesToScoreEvent()));
 
-        // txns
-        //     .apply("Convert back to String",
-        //         ParDo.of(new txnToString()))
-        //     .apply(TextIO.write().to(options.getOutputPath()));
 
-
-        features
+        scores
             .apply("Convert back to String",
-                ParDo.of(new classToString<Features>()))
+                ParDo.of(new classToString<ScoreEvent>()))
             .apply(TextIO.write().to(options.getOutputPath()));
+
+
+        // features
+        //     .apply("Convert back to String",
+        //         ParDo.of(new classToString<Features>()))
+        //     .apply(TextIO.write().to(options.getOutputPath()));
 
         p.run();
 

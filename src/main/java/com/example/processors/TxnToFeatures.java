@@ -38,6 +38,14 @@ public class TxnToFeatures extends DoFn<Transaction, Features> {
         ProfileRecord profile = c.sideInput(profileMap).get(custId);
         CustInfoRecord custInfo = c.sideInput(custInfoMap).get(custId);
 
+        // if we don't have a profile / cust info on a customer, then make an empty object
+        if (profile == null) {
+            profile = new ProfileRecord();
+        }
+        if (custInfo == null) {
+            custInfo = new CustInfoRecord();
+        }
+
         // compute features
         FeaturesTxn txnFeats = GenFeaturesTxn.process(txn);
         FeaturesProfile profileFeats = GenFeaturesProfile.process(txn, profile);
