@@ -24,16 +24,24 @@ public class GenFeaturesCustInfo implements Serializable {
         feats.setMaritalStatusDivorced(cust.getMaritalStatus().equals("divorced") ? 1 : 0);
 
         // Location
-        feats.setHomeLongitude(cust.getHomeLongitude());
-        feats.setHomeLatitude(cust.getHomeLatitude());
-        feats.setDistanceFromHome(
-            Math.pow(
-                Math.pow(txn.getLongitude() - cust.getHomeLongitude(), 2)
-                + Math.pow(txn.getLatitude() - cust.getHomeLatitude(), 2),
-                0.5
-            )
-        );
-
+        feats.setHomeLongitude(cust.getHomeLongitude() == null ? 0 : cust.getHomeLongitude());
+        feats.setHomeLatitude(cust.getHomeLatitude() == null ? 0 : cust.getHomeLatitude());
+        if (cust.getHomeLongitude() == null
+                || cust.getHomeLatitude() == null
+                || txn.getLongitude() == null
+                ||txn.getLatitude() == null) {
+            // set distance from home to be -1 if we don't have a customer profile
+            feats.setDistanceFromHome(-1);
+        }
+        else {
+            feats.setDistanceFromHome(
+                Math.pow(
+                    Math.pow(txn.getLongitude() - cust.getHomeLongitude(), 2)
+                    + Math.pow(txn.getLatitude() - cust.getHomeLatitude(), 2),
+                    0.5
+                )
+            );
+        }
         return feats;
     }
 }

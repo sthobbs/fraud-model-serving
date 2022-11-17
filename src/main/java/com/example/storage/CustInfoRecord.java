@@ -7,11 +7,11 @@ import lombok.Data;
 public class CustInfoRecord implements Serializable {
     
     private String customerId;
-    private int age;
-    private String gender;
-    private String maritalStatus;
-    private double homeLongitude;
-    private double homeLatitude;
+    private int age = -1;
+    private String gender = "";
+    private String maritalStatus = "";
+    private Double homeLongitude;
+    private Double homeLatitude;
 
 
 }

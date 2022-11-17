@@ -8,7 +8,7 @@ import lombok.Data;
 // This class models a transaction and it's session before the transaction
 @Data
 public class Transaction implements Serializable {
-    private Integer fraudLabel;
+    private int fraudLabel = 0;
     private String uniqueId;
     private String customerId;
     private String sessionId;
@@ -16,8 +16,8 @@ public class Transaction implements Serializable {
     private String action;
     private Double longitude;
     private Double latitude;
-    private Double amount;
-    private String accountType;
+    private double amount = -1;
+    private String accountType = "";
     private String recipient;
     private ArrayList<Action> actions; 
 

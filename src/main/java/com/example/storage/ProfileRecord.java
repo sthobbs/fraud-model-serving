@@ -12,63 +12,63 @@ public class ProfileRecord implements Serializable {
     private String customerId;
 
     // Amounts of transactions
-    private double amountMin;
-    private double amountMax;
-    private double amountAvg;
-    private double amountStd;
-    private double amountPercentile10;
-    private double amountPercentile25;
-    private double amountPercentile50;
-    private double amountPercentile75;
-    private double amountPercentile90;
+    private double amountMin = -1;
+    private double amountMax = -1;
+    private double amountAvg = -1;
+    private double amountStd = -1;
+    private double amountPercentile10 = -1;
+    private double amountPercentile25 = -1;
+    private double amountPercentile50 = -1;
+    private double amountPercentile75 = -1;
+    private double amountPercentile90 = -1;
 
     // Time between start of the session and the transaction
-    private Double meanSecondsToTransaction;
-    private Double stdSecondsToTransaction;
+    private double meanSecondsToTransaction = -1;
+    private double stdSecondsToTransaction = -1;
 
     // Number of sessions with transactions
-    private int sessionCount;
+    private int sessionCount = -1;
     
     // Number of transactions
-    private int transactionCount;
+    private int transactionCount = -1;
 
     // Session action count averages (before the transaction)
-    private double meanSessionActionCount;
-    private double meanSessionAction0Count;
-    private double meanSessionAction1Count;
-    private double meanSessionAction2Count;
-    private double meanSessionAction3Count;
-    private double meanSessionAction4Count;
-    private double meanSessionAction5Count;
-    private double meanSessionAction6Count;
-    private double meanSessionAction7Count;
-    private double meanSessionAction8Count;
-    private double meanSessionAction9Count;
+    private double meanSessionActionCount = -1;
+    private double meanSessionAction0Count = -1;
+    private double meanSessionAction1Count = -1;
+    private double meanSessionAction2Count = -1;
+    private double meanSessionAction3Count = -1;
+    private double meanSessionAction4Count = -1;
+    private double meanSessionAction5Count = -1;
+    private double meanSessionAction6Count = -1;
+    private double meanSessionAction7Count = -1;
+    private double meanSessionAction8Count = -1;
+    private double meanSessionAction9Count = -1;
 
     // Session action count standard deviations (before the transaction)
-    private double stdSessionActionCount;
-    private double stdSessionAction0Count;
-    private double stdSessionAction1Count;
-    private double stdSessionAction2Count;
-    private double stdSessionAction3Count;
-    private double stdSessionAction4Count;
-    private double stdSessionAction5Count;
-    private double stdSessionAction6Count;
-    private double stdSessionAction7Count;
-    private double stdSessionAction8Count;
-    private double stdSessionAction9Count;
+    private double stdSessionActionCount = -1;
+    private double stdSessionAction0Count = -1;
+    private double stdSessionAction1Count = -1;
+    private double stdSessionAction2Count = -1;
+    private double stdSessionAction3Count = -1;
+    private double stdSessionAction4Count = -1;
+    private double stdSessionAction5Count = -1;
+    private double stdSessionAction6Count = -1;
+    private double stdSessionAction7Count = -1;
+    private double stdSessionAction8Count = -1;
+    private double stdSessionAction9Count = -1;
 
     // Session transaction count averages (before and including the current transaction)
-    private double meanSessionTransactionCount;
-    private double meanSessionTransactionFromCheckingCount;
-    private double meanSessionTransactionFromSavingsCount;
-    private double meanSessionTransactionFromCreditCardCount;
+    private double meanSessionTransactionCount = -1;
+    private double meanSessionTransactionFromCheckingCount = -1;
+    private double meanSessionTransactionFromSavingsCount = -1;
+    private double meanSessionTransactionFromCreditCardCount = -1;
 
     // Session transaction count averages (before and including the current transaction)
-    private double stdSessionTransactionCount;
-    private double stdSessionTransactionFromCheckingCount;
-    private double stdSessionTransactionFromSavingsCount;
-    private double stdSessionTransactionFromCreditCardCount;
+    private double stdSessionTransactionCount = -1;
+    private double stdSessionTransactionFromCheckingCount = -1;
+    private double stdSessionTransactionFromSavingsCount = -1;
+    private double stdSessionTransactionFromCreditCardCount = -1;
     
     // Recipient array
     private ArrayList<Recipient> recipients;

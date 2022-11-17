@@ -52,8 +52,8 @@ public class FeaturesTxn implements Serializable {
     int actionCount;
 
     // Total duration and average duration per action
-    Long secondsToTransaction;
-    Double avgActionDuration;
+    long secondsToTransaction;
+    double avgActionDuration;
 
     // Sum/avg/min/max amounts for transactions in session
     double amountSum;

@@ -1,8 +1,10 @@
 package com.example.storage;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class Features implements Serializable {
@@ -56,8 +58,8 @@ public class Features implements Serializable {
     int actionCount;
 
     // Total duration and average duration per action
-    Long secondsToTransaction;
-    Double avgActionDuration;
+    long secondsToTransaction;
+    double avgActionDuration;
 
     // Sum/avg/min/max amounts for transactions in session
     double amountSum;
@@ -96,8 +98,8 @@ public class Features implements Serializable {
 
     // Time between start of session and first transaction
     double profileRawMeanSecondsToTransaction;
-    Double profileRawStdSecondsToTransaction;
-    Double profileSecondsToTransactionZScore;
+    double profileRawStdSecondsToTransaction;
+    double profileSecondsToTransactionZScore;
 
     // Number of sessions with transactions
     int profileRawSessionCount;
@@ -181,6 +183,124 @@ public class Features implements Serializable {
     double homeLongitude;
     double homeLatitude;
     double distanceFromHome;
+
+    // -------------------------------------------------------------------------
+    // Feature Names
+    // -------------------------------------------------------------------------
+
+    @Getter
+    private static final String[] featureNames = {
+        "longitude",
+        "latitude",
+        "amount",
+        "amountMod1",
+        "amountMod100",
+        "amountMod250",
+        "amountMod500",
+        "amountMod1000",
+        "hour",
+        "dayOfWeek",
+        "dayOfMonth",
+        "accountTypeChecking",
+        "accountTypeSavings",
+        "accountTypeCreditCard",
+        "transactionCount",
+        "action0Count",
+        "action1Count",
+        "action2Count",
+        "action3Count",
+        "action4Count",
+        "action5Count",
+        "action6Count",
+        "action7Count",
+        "action8Count",
+        "action9Count",
+        "actionCount",
+        "secondsToTransaction",
+        "avgActionDuration",
+        "amountSum",
+        "amountAvg",
+        "amountMin",
+        "amountMax",
+        "recipientTransactionCount",
+        "distinctRecipientCount",
+        "repeatedRecipientCount",
+        "profileRawInd",
+        "profileRawAmountMin",
+        "profileRawAmountMax",
+        "profileRawAmountAvg",
+        "profileRawAmountStd",
+        "profileRawAmountPercentile10",
+        "profileRawAmountPercentile25",
+        "profileRawAmountPercentile50",
+        "profileRawAmountPercentile75",
+        "profileRawAmountPercentile90",
+        "profileAmountZScore",
+        "profileRawMeanSecondsToTransaction",
+        "profileRawStdSecondsToTransaction",
+        "profileSecondsToTransactionZScore",
+        "profileRawSessionCount",
+        "profileRawTransactionCount",
+        "profileRawMeanSessionActionCount",
+        "profileRawMeanSessionAction0Count",
+        "profileRawMeanSessionAction1Count",
+        "profileRawMeanSessionAction2Count",
+        "profileRawMeanSessionAction3Count",
+        "profileRawMeanSessionAction4Count",
+        "profileRawMeanSessionAction5Count",
+        "profileRawMeanSessionAction6Count",
+        "profileRawMeanSessionAction7Count",
+        "profileRawMeanSessionAction8Count",
+        "profileRawMeanSessionAction9Count",
+        "profileRawStdSessionActionCount",
+        "profileRawStdSessionAction0Count",
+        "profileRawStdSessionAction1Count",
+        "profileRawStdSessionAction2Count",
+        "profileRawStdSessionAction3Count",
+        "profileRawStdSessionAction4Count",
+        "profileRawStdSessionAction5Count",
+        "profileRawStdSessionAction6Count",
+        "profileRawStdSessionAction7Count",
+        "profileRawStdSessionAction8Count",
+        "profileRawStdSessionAction9Count",
+        "profileSessionActionCountZScore",
+        "profileSessionAction0CountZScore",
+        "profileSessionAction1CountZScore",
+        "profileSessionAction2CountZScore",
+        "profileSessionAction3CountZScore",
+        "profileSessionAction4CountZScore",
+        "profileSessionAction5CountZScore",
+        "profileSessionAction6CountZScore",
+        "profileSessionAction7CountZScore",
+        "profileSessionAction8CountZScore",
+        "profileSessionAction9CountZScore",
+        "profileRawMeanSessionTransactionCount",
+        "profileRawMeanSessionTransactionFromCheckingCount",
+        "profileRawMeanSessionTransactionFromSavingsCount",
+        "profileRawMeanSessionTransactionFromCreditCardCount",
+        "profileRawStdSessionTransactionCount",
+        "profileRawStdSessionTransactionFromCheckingCount",
+        "profileRawStdSessionTransactionFromSavingsCount",
+        "profileRawStdSessionTransactionFromCreditCardCount",
+        "profileSessionTransactionCountZScore",
+        "profileSessionTransactionFromCheckingCountZScore",
+        "profileSessionTransactionFromSavingsCountZScore",
+        "profileSessionTransactionFromCreditCardCountZScore",
+        "profileRecipientTxnCount",
+        "profileDistinctRecipientCount",
+        "age",
+        "genderMale",
+        "maritalStatusSingle",
+        "maritalStatusMarried",
+        "maritalStatusDivorced",
+        "homeLongitude",
+        "homeLatitude",
+        "distanceFromHome"
+    };
+
+    @Getter
+    private static final String featureNamesStr = String.join(", ", featureNames);
+
 
     public Features(){
     }
@@ -304,7 +424,19 @@ public class Features implements Serializable {
         this.maritalStatusDivorced = custInfoFeats.getMaritalStatusDivorced();
         this.homeLongitude = custInfoFeats.getHomeLongitude();
         this.homeLatitude = custInfoFeats.getHomeLatitude();
-        this.distanceFromHome = custInfoFeats.getDistanceFromHome();
-        
+        this.distanceFromHome = custInfoFeats.getDistanceFromHome();   
+    }
+
+    // Dynamically get fields
+    public Object getProperty(String fieldName) {
+        try {
+            Field field = this.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(this);
+        }
+        catch (IllegalAccessException | NoSuchFieldException e) {
+            // TODO: add log
+            return null;
+        }
     }
 }

@@ -31,8 +31,8 @@ public class FeaturesProfile implements Serializable {
 
     // Time between start of session and first transaction
     double profileRawMeanSecondsToTransaction;
-    Double profileRawStdSecondsToTransaction;
-    Double profileSecondsToTransactionZScore;
+    double profileRawStdSecondsToTransaction;
+    double profileSecondsToTransactionZScore;
 
     // Number of sessions with transactions
     int profileRawSessionCount;

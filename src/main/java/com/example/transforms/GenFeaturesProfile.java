@@ -35,13 +35,15 @@ public class GenFeaturesProfile implements Serializable {
         feats.setProfileRawAmountPercentile90(profile.getAmountPercentile90());
         if (profile.getAmountStd() > 0) {
             feats.setProfileAmountZScore(txn.getAmount() - profile.getAmountAvg() / profile.getAmountStd());
+        } else {
+            feats.setProfileAmountZScore(-1);
         }
         
         // Time between start of session and first transaction
         feats.setProfileRawMeanSecondsToTransaction(profile.getMeanSecondsToTransaction());
         feats.setProfileRawStdSecondsToTransaction(profile.getStdSecondsToTransaction());
-        String dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS"; // TODO: put in different file
-        if (profile.getStdSecondsToTransaction() != null) {
+        String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"; // TODO: put in different file
+        if (profile.getStdSecondsToTransaction() > 0) {
             try {
                 String txnTimeStr = txn.getTimestamp().substring(0, 23);
                 Date txnTime = new SimpleDateFormat(dateFormat).parse(txnTimeStr);
@@ -53,8 +55,10 @@ public class GenFeaturesProfile implements Serializable {
                     / profile.getStdSecondsToTransaction());
             }
             catch (ParseException | ArithmeticException e) {
-                feats.setProfileSecondsToTransactionZScore(null);
+                feats.setProfileSecondsToTransactionZScore(-1);
             }
+        } else {
+            feats.setProfileSecondsToTransactionZScore(-1);
         }
         
         // Number of sessions with transactions
@@ -94,66 +98,98 @@ public class GenFeaturesProfile implements Serializable {
             feats.setProfileSessionActionCountZScore(
                 (actions.size() - profile.getMeanSessionActionCount())
                 / profile.getStdSessionActionCount());
+        } else {
+            feats.setProfileSessionActionCountZScore(-1);
         }
+
         if (profile.getStdSessionAction0Count() > 0) {
             feats.setProfileSessionAction0CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_0")).count()
                     - profile.getMeanSessionAction0Count())
                 / profile.getStdSessionAction0Count());
+        } else {
+            feats.setProfileSessionAction0CountZScore(-1);
         }
+
         if (profile.getStdSessionAction1Count() > 0) {
             feats.setProfileSessionAction1CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_1")).count()
                     - profile.getMeanSessionAction1Count())
                 / profile.getStdSessionAction1Count());
+        } else {
+            feats.setProfileSessionAction1CountZScore(-1);
         }
+
         if (profile.getStdSessionAction2Count() > 0) {
             feats.setProfileSessionAction2CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_2")).count()
                     - profile.getMeanSessionAction2Count())
                 / profile.getStdSessionAction2Count());
+        } else {
+            feats.setProfileSessionAction2CountZScore(-1);
         }
+
         if (profile.getStdSessionAction3Count() > 0) {
             feats.setProfileSessionAction3CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_3")).count()
                     - profile.getMeanSessionAction3Count())
                 / profile.getStdSessionAction3Count());
+        } else {
+            feats.setProfileSessionAction3CountZScore(-1);
         }
+
         if (profile.getStdSessionAction4Count() > 0) {
             feats.setProfileSessionAction4CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_4")).count()
                     - profile.getMeanSessionAction4Count())
                 / profile.getStdSessionAction4Count());
+        } else {
+            feats.setProfileSessionAction4CountZScore(-1);
         }
+
         if (profile.getStdSessionAction5Count() > 0) {
             feats.setProfileSessionAction5CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_5")).count()
                     - profile.getMeanSessionAction5Count())
                 / profile.getStdSessionAction5Count());
+        } else {
+            feats.setProfileSessionAction5CountZScore(-1);
         }
+
         if (profile.getStdSessionAction6Count() > 0) {
             feats.setProfileSessionAction6CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_6")).count()
                     - profile.getMeanSessionAction6Count())
                 / profile.getStdSessionAction6Count());
+        } else {
+            feats.setProfileSessionAction6CountZScore(-1);
         }
+
         if (profile.getStdSessionAction7Count() > 0) {
             feats.setProfileSessionAction7CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_7")).count()
                     - profile.getMeanSessionAction7Count())
                 / profile.getStdSessionAction7Count());
+        } else {
+            feats.setProfileSessionAction7CountZScore(-1);
         }
+
         if (profile.getStdSessionAction8Count() > 0) {
             feats.setProfileSessionAction8CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_8")).count()
                     - profile.getMeanSessionAction8Count())
                 / profile.getStdSessionAction8Count());
+        } else {
+            feats.setProfileSessionAction8CountZScore(-1);
         }
+
         if (profile.getStdSessionAction9Count() > 0) {
             feats.setProfileSessionAction9CountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("action_9")).count()
                     - profile.getMeanSessionAction9Count())
                 / profile.getStdSessionAction9Count());
+        } else {
+            feats.setProfileSessionAction9CountZScore(-1);
         }
 
         // Session transaction count averages
@@ -174,42 +210,61 @@ public class GenFeaturesProfile implements Serializable {
                 (actions.stream().filter(s -> s.getAction().equals("transaction")).count()
                     - profile.getMeanSessionTransactionCount())
                 / profile.getStdSessionTransactionCount());
+        } else {
+            feats.setProfileSessionTransactionCountZScore(-1);
         }
+
         if (profile.getStdSessionTransactionFromCheckingCount() > 0) {
             feats.setProfileSessionTransactionFromCheckingCountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("transaction")
                         && s.getAccountType().equals("checking")).count()
                     - profile.getMeanSessionTransactionFromCheckingCount())
                 / profile.getStdSessionTransactionFromCheckingCount());
+        } else {
+            feats.setProfileSessionTransactionFromCheckingCountZScore(-1);
         }
+
         if (profile.getStdSessionTransactionFromSavingsCount() > 0) {
             feats.setProfileSessionTransactionFromSavingsCountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("transaction")
                         && s.getAccountType().equals("savings")).count()
                     - profile.getMeanSessionTransactionFromSavingsCount())
                 / profile.getStdSessionTransactionFromSavingsCount());
+        } else {
+            feats.setProfileSessionTransactionFromSavingsCountZScore(-1);
         }
+
         if (profile.getStdSessionTransactionFromCreditCardCount() > 0) {
             feats.setProfileSessionTransactionFromCreditCardCountZScore(
                 (actions.stream().filter(s -> s.getAction().equals("transaction")
                         && s.getAccountType().equals("credit_card")).count()
                     - profile.getMeanSessionTransactionFromCreditCardCount())
                 / profile.getStdSessionTransactionFromCreditCardCount());
+        } else {
+            feats.setProfileSessionTransactionFromCreditCardCountZScore(-1);
         }
 
         // Number of times they previously sent money to this recipient
         String recipient = txn.getRecipient();
-        feats.setProfileRecipientTxnCount(profile.getRecipients().stream()
-            .filter(s -> s.getRecipient().equals(recipient))
-            .map(s -> s.getTxnCnt())
-            .findFirst().orElse(0)); //.get());
-       
+        if (profile.getRecipients() == null){
+            feats.setProfileRecipientTxnCount(0);
+        } else {
+            feats.setProfileRecipientTxnCount(profile.getRecipients().stream()
+                .filter(s -> s.getRecipient().equals(recipient))
+                .map(s -> s.getTxnCnt())
+                .findFirst().orElse(0)); //.get());
+        }
+
         // Number of distinct recipients they previously sent money to
+        if (profile.getRecipients() == null){
+            feats.setProfileDistinctRecipientCount(0);
+        } else {
         feats.setProfileDistinctRecipientCount(profile.getRecipients().stream()
             .map(s -> s.getRecipient())
             .distinct()
             .count());
-
+        }
+        
         return feats;
     }
 }
