@@ -1,2 +1,3 @@
 target/
 .apt_generated*
+*service_account_key.json
