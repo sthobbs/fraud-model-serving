@@ -9,181 +9,178 @@ import lombok.Getter;
 @Data
 public class Features implements Serializable {
     
-
     // -------------------------------------------------------------------------
     // Transaction Features
     // -------------------------------------------------------------------------
 
     // non-feature fields
-    int fraudLabel;
-    String uniqueId;
-    String customerId;
-    String sessionId;
-    String timestamp;
-    String action;
+    private int fraudLabel;
+    private String uniqueId;
+    private String customerId;
+    private String sessionId;
+    private String timestamp;
+    private String action;
 
     // Location features
-    double longitude;
-    double latitude;
+    private double longitude;
+    private double latitude;
 
     // Amount features
-    double amount;
-    double amountMod1;
-    double amountMod100;
-    double amountMod250;
-    double amountMod500;
-    double amountMod1000;
+    private double amount;
+    private double amountMod1;
+    private double amountMod100;
+    private double amountMod250;
+    private double amountMod500;
+    private double amountMod1000;
 
     // Transaction time features
-    int hour;
-    int dayOfWeek;
-    int dayOfMonth;
+    private int hour;
+    private int dayOfWeek;
+    private int dayOfMonth;
 
     // Account type features
-    int accountTypeChecking;
-    int accountTypeSavings;
-    int accountTypeCreditCard;
+    private int accountTypeChecking;
+    private int accountTypeSavings;
+    private int accountTypeCreditCard;
 
     // Count of each type of action
-    int transactionCount;
-    int action0Count;
-    int action1Count;
-    int action2Count;
-    int action3Count;
-    int action4Count;
-    int action5Count;
-    int action6Count;
-    int action7Count;
-    int action8Count;
-    int action9Count;
-    int actionCount;
+    private int transactionCount;
+    private int action0Count;
+    private int action1Count;
+    private int action2Count;
+    private int action3Count;
+    private int action4Count;
+    private int action5Count;
+    private int action6Count;
+    private int action7Count;
+    private int action8Count;
+    private int action9Count;
+    private int actionCount;
 
     // Total duration and average duration per action
-    long secondsToTransaction;
-    double avgActionDuration;
+    private long secondsToTransaction;
+    private double avgActionDuration;
 
     // Sum/avg/min/max amounts for transactions in session
-    double amountSum;
-    double amountAvg;
-    double amountMin;
-    double amountMax;
+    private double amountSum;
+    private double amountAvg;
+    private double amountMin;
+    private double amountMax;
 
     // Count transactions to the current recipient in session
-    int recipientTransactionCount;
+    private int recipientTransactionCount;
 
     // Number of distinct recipients
-    int distinctRecipientCount;
+    private int distinctRecipientCount;
 
     // Number of repeated recipients (# txns - # distinct recipients)
-    int repeatedRecipientCount;
+    private int repeatedRecipientCount;
     
-
     // -------------------------------------------------------------------------
     // Profile Features
     // -------------------------------------------------------------------------
 
     // Indicator of whether or not we have a profle for this customer
-    int profileRawInd;
+    private int profileRawInd;
 
     // Amount features
-    double profileRawAmountMin;
-    double profileRawAmountMax;
-    double profileRawAmountAvg;
-    double profileRawAmountStd;
-    double profileRawAmountPercentile10;
-    double profileRawAmountPercentile25;
-    double profileRawAmountPercentile50;
-    double profileRawAmountPercentile75;
-    double profileRawAmountPercentile90;
-    double profileAmountZScore;
+    private double profileRawAmountMin;
+    private double profileRawAmountMax;
+    private double profileRawAmountAvg;
+    private double profileRawAmountStd;
+    private double profileRawAmountPercentile10;
+    private double profileRawAmountPercentile25;
+    private double profileRawAmountPercentile50;
+    private double profileRawAmountPercentile75;
+    private double profileRawAmountPercentile90;
+    private double profileAmountZScore;
 
     // Time between start of session and first transaction
-    double profileRawMeanSecondsToTransaction;
-    double profileRawStdSecondsToTransaction;
-    double profileSecondsToTransactionZScore;
+    private double profileRawMeanSecondsToTransaction;
+    private double profileRawStdSecondsToTransaction;
+    private double profileSecondsToTransactionZScore;
 
     // Number of sessions with transactions
-    int profileRawSessionCount;
+    private int profileRawSessionCount;
 
     // Number of transactions
-    int profileRawTransactionCount;
+    private int profileRawTransactionCount;
 
     // Session action count averages
-    double profileRawMeanSessionActionCount;
-    double profileRawMeanSessionAction0Count;
-    double profileRawMeanSessionAction1Count;
-    double profileRawMeanSessionAction2Count;
-    double profileRawMeanSessionAction3Count;
-    double profileRawMeanSessionAction4Count;
-    double profileRawMeanSessionAction5Count;
-    double profileRawMeanSessionAction6Count;
-    double profileRawMeanSessionAction7Count;
-    double profileRawMeanSessionAction8Count;
-    double profileRawMeanSessionAction9Count;
+    private double profileRawMeanSessionActionCount;
+    private double profileRawMeanSessionAction0Count;
+    private double profileRawMeanSessionAction1Count;
+    private double profileRawMeanSessionAction2Count;
+    private double profileRawMeanSessionAction3Count;
+    private double profileRawMeanSessionAction4Count;
+    private double profileRawMeanSessionAction5Count;
+    private double profileRawMeanSessionAction6Count;
+    private double profileRawMeanSessionAction7Count;
+    private double profileRawMeanSessionAction8Count;
+    private double profileRawMeanSessionAction9Count;
     
     // Session action count standard deviations
-    double profileRawStdSessionActionCount;
-    double profileRawStdSessionAction0Count;
-    double profileRawStdSessionAction1Count;
-    double profileRawStdSessionAction2Count;
-    double profileRawStdSessionAction3Count;
-    double profileRawStdSessionAction4Count;
-    double profileRawStdSessionAction5Count;
-    double profileRawStdSessionAction6Count;
-    double profileRawStdSessionAction7Count;
-    double profileRawStdSessionAction8Count;
-    double profileRawStdSessionAction9Count;
+    private double profileRawStdSessionActionCount;
+    private double profileRawStdSessionAction0Count;
+    private double profileRawStdSessionAction1Count;
+    private double profileRawStdSessionAction2Count;
+    private double profileRawStdSessionAction3Count;
+    private double profileRawStdSessionAction4Count;
+    private double profileRawStdSessionAction5Count;
+    private double profileRawStdSessionAction6Count;
+    private double profileRawStdSessionAction7Count;
+    private double profileRawStdSessionAction8Count;
+    private double profileRawStdSessionAction9Count;
 
     // Session action count z-scores
-    double profileSessionActionCountZScore;
-    double profileSessionAction0CountZScore;
-    double profileSessionAction1CountZScore;
-    double profileSessionAction2CountZScore;
-    double profileSessionAction3CountZScore;
-    double profileSessionAction4CountZScore;
-    double profileSessionAction5CountZScore;
-    double profileSessionAction6CountZScore;
-    double profileSessionAction7CountZScore;
-    double profileSessionAction8CountZScore;
-    double profileSessionAction9CountZScore;
+    private double profileSessionActionCountZScore;
+    private double profileSessionAction0CountZScore;
+    private double profileSessionAction1CountZScore;
+    private double profileSessionAction2CountZScore;
+    private double profileSessionAction3CountZScore;
+    private double profileSessionAction4CountZScore;
+    private double profileSessionAction5CountZScore;
+    private double profileSessionAction6CountZScore;
+    private double profileSessionAction7CountZScore;
+    private double profileSessionAction8CountZScore;
+    private double profileSessionAction9CountZScore;
 
     // Session transaction count averages
-    double profileRawMeanSessionTransactionCount;
-    double profileRawMeanSessionTransactionFromCheckingCount;
-    double profileRawMeanSessionTransactionFromSavingsCount;
-    double profileRawMeanSessionTransactionFromCreditCardCount;
+    private double profileRawMeanSessionTransactionCount;
+    private double profileRawMeanSessionTransactionFromCheckingCount;
+    private double profileRawMeanSessionTransactionFromSavingsCount;
+    private double profileRawMeanSessionTransactionFromCreditCardCount;
 
     // Session transaction count standard deviations
-    double profileRawStdSessionTransactionCount;
-    double profileRawStdSessionTransactionFromCheckingCount;
-    double profileRawStdSessionTransactionFromSavingsCount;
-    double profileRawStdSessionTransactionFromCreditCardCount;
+    private double profileRawStdSessionTransactionCount;
+    private double profileRawStdSessionTransactionFromCheckingCount;
+    private double profileRawStdSessionTransactionFromSavingsCount;
+    private double profileRawStdSessionTransactionFromCreditCardCount;
 
     // Session transaction count z-score
-    double profileSessionTransactionCountZScore;
-    double profileSessionTransactionFromCheckingCountZScore;
-    double profileSessionTransactionFromSavingsCountZScore;
-    double profileSessionTransactionFromCreditCardCountZScore;
+    private double profileSessionTransactionCountZScore;
+    private double profileSessionTransactionFromCheckingCountZScore;
+    private double profileSessionTransactionFromSavingsCountZScore;
+    private double profileSessionTransactionFromCreditCardCountZScore;
 
     // Number of times they previously sent money to this recipient
-    int profileRecipientTxnCount;
+    private int profileRecipientTxnCount;
 
     // Number of distinct recipients they previously sent money to
-    long profileDistinctRecipientCount;
-
+    private long profileDistinctRecipientCount;
 
     // -------------------------------------------------------------------------
     // Customer Info Features
     // -------------------------------------------------------------------------
 
-    int age;
-    int genderMale;
-    int maritalStatusSingle;
-    int maritalStatusMarried;
-    int maritalStatusDivorced;
-    double homeLongitude;
-    double homeLatitude;
-    double distanceFromHome;
+    private int age;
+    private int genderMale;
+    private int maritalStatusSingle;
+    private int maritalStatusMarried;
+    private int maritalStatusDivorced;
+    private double homeLongitude;
+    private double homeLatitude;
+    private double distanceFromHome;
 
     // -------------------------------------------------------------------------
     // Feature Names
@@ -301,7 +298,6 @@ public class Features implements Serializable {
 
     @Getter
     private static final String featureNamesStr = String.join(", ", featureNames);
-
 
     public Features(){
     }

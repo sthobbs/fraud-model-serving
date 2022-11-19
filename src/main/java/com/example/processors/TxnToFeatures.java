@@ -17,14 +17,13 @@ import org.apache.beam.sdk.values.PCollectionView;
 
 public class TxnToFeatures extends DoFn<Transaction, Features> {
 
-    PCollectionView<HashMap<String, ProfileRecord>> profileMap;
-    PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap;    
+    private PCollectionView<HashMap<String, ProfileRecord>> profileMap;
+    private PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap;    
 
     public TxnToFeatures(PCollectionView<HashMap<String, ProfileRecord>> profileMap,
                          PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap) {
         this.profileMap = profileMap;
         this.custInfoMap = custInfoMap;
-
     }
 
     @ProcessElement
@@ -53,7 +52,6 @@ public class TxnToFeatures extends DoFn<Transaction, Features> {
         // combine features
         Features feats = new Features(txnFeats, profileFeats, custInfoFeats);
 
-        c.output(feats);
-        
+        c.output(feats); 
     } 
 }

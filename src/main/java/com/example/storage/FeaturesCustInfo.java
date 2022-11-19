@@ -7,13 +7,13 @@ import lombok.Data;
 @Data
 public class FeaturesCustInfo implements Serializable {
 
-    int age;
-    int genderMale;
-    int maritalStatusSingle;
-    int maritalStatusMarried;
-    int maritalStatusDivorced;
-    double homeLongitude;
-    double homeLatitude;
-    double distanceFromHome;
+    private int age;
+    private int genderMale;
+    private int maritalStatusSingle;
+    private int maritalStatusMarried;
+    private int maritalStatusDivorced;
+    private double homeLongitude;
+    private double homeLatitude;
+    private double distanceFromHome;
     
 }

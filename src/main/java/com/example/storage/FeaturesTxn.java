@@ -8,65 +8,65 @@ import lombok.Data;
 public class FeaturesTxn implements Serializable {
 
     // non-feature fields
-    int fraudLabel;
-    String uniqueId;
-    String customerId;
-    String sessionId;
-    String timestamp;
-    String action;
+    private int fraudLabel;
+    private String uniqueId;
+    private String customerId;
+    private String sessionId;
+    private String timestamp;
+    private String action;
 
     // Location features
-    double longitude;
-    double latitude;
+    private double longitude;
+    private double latitude;
 
     // Amount features
-    double amount;
-    double amountMod1;
-    double amountMod100;
-    double amountMod250;
-    double amountMod500;
-    double amountMod1000;
+    private double amount;
+    private double amountMod1;
+    private double amountMod100;
+    private double amountMod250;
+    private double amountMod500;
+    private double amountMod1000;
 
     // Transaction time features
-    int hour;
-    int dayOfWeek;
-    int dayOfMonth;
+    private int hour;
+    private int dayOfWeek;
+    private int dayOfMonth;
 
     // Account type features
-    int accountTypeChecking;
-    int accountTypeSavings;
-    int accountTypeCreditCard;
+    private int accountTypeChecking;
+    private int accountTypeSavings;
+    private int accountTypeCreditCard;
 
     // Count of each type of action
-    int transactionCount;
-    int action0Count;
-    int action1Count;
-    int action2Count;
-    int action3Count;
-    int action4Count;
-    int action5Count;
-    int action6Count;
-    int action7Count;
-    int action8Count;
-    int action9Count;
-    int actionCount;
+    private int transactionCount;
+    private int action0Count;
+    private int action1Count;
+    private int action2Count;
+    private int action3Count;
+    private int action4Count;
+    private int action5Count;
+    private int action6Count;
+    private int action7Count;
+    private int action8Count;
+    private int action9Count;
+    private int actionCount;
 
     // Total duration and average duration per action
-    long secondsToTransaction;
-    double avgActionDuration;
+    private long secondsToTransaction;
+    private double avgActionDuration;
 
     // Sum/avg/min/max amounts for transactions in session
-    double amountSum;
-    double amountAvg;
-    double amountMin;
-    double amountMax;
+    private double amountSum;
+    private double amountAvg;
+    private double amountMin;
+    private double amountMax;
 
     // Count transactions to the current recipient in session
-    int recipientTransactionCount;
+    private int recipientTransactionCount;
 
     // Number of distinct recipients
-    int distinctRecipientCount;
+    private int distinctRecipientCount;
 
     // Number of repeated recipients (# txns - # distinct recipients)
-    int repeatedRecipientCount;
+    private int repeatedRecipientCount;
 }
