@@ -39,9 +39,10 @@ public class App// implements Serializable
         PipelineOptionsFactory.register(ModelPipelineOptions.class);
 
         // set execution options for pipeline
-        ModelPipelineOptions options = PipelineOptionsFactory.fromArgs(args)
-                                                //   .withValidation()
-                                                  .as(ModelPipelineOptions.class);
+        ModelPipelineOptions options = PipelineOptionsFactory
+                                                .fromArgs(args)
+                                                // .withValidation()
+                                                .as(ModelPipelineOptions.class);
 
         Configuration config = new PropertiesConfiguration("config.properties");
 
@@ -57,10 +58,11 @@ public class App// implements Serializable
         }
 
         // set options from config file
-        options.setProject(config.getString("projectId"));
+        options.setProject(config.getString("project"));
+        options.setBucket(config.getString("bucket"));
         options.setInputPath(config.getString("inputPath"));
-        options.setProfileSideInputPath(config.getString("profilePath"));
-        options.setCustomerInfoSideInputPath(config.getString("custInfoPath"));
+        options.setProfileSideInputPrefix(config.getString("profileSideInputPrefix"));
+        options.setCustomerInfoSideInputPrefix(config.getString("custInfoSideInputPrefix"));
         options.setModelPath(config.getString("modelPath"));
         options.setOutputPath(config.getString("outputPath"));
 
@@ -86,7 +88,7 @@ public class App// implements Serializable
             experiments.add("use_runner_v2");
             options.setExperiments(ImmutableList.copyOf(experiments));
         }
-        
+
         options.setSdkContainerImage("gcr.io/analog-arbor-367702/model-serving:latest");
 
 

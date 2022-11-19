@@ -18,14 +18,6 @@ public interface ModelPipelineOptions extends DataflowPipelineOptions {
     String getInputType();
     void setInputType(String input);
 
-    @Description("profile side input path")
-    String getProfileSideInputPath();
-    void setProfileSideInputPath(String input);
-
-    @Description("customer info side input path")
-    String getCustomerInfoSideInputPath();
-    void setCustomerInfoSideInputPath(String input);
-
     @Description("model path")
     String getModelPath();
     void setModelPath(String input);
@@ -38,8 +30,21 @@ public interface ModelPipelineOptions extends DataflowPipelineOptions {
     String getOutputType();
     void setOutputType(String output);
 
-    @Description("project id")
-    @Default.String("analog-arbor-367702")
-    String getProjectId();
-    void setProjectId(String input);
+    // @Description("project id")
+    // @Default.String("analog-arbor-367702")
+    // String getProjectId();
+    // void setProjectId(String input);
+
+    @Description("bucket id")
+    String getBucket();
+    void setBucket(String input);
+
+
+    @Description("profile side input path")
+    String getProfileSideInputPrefix();
+    void setProfileSideInputPrefix(String input);
+
+    @Description("customer info side input path")
+    String getCustomerInfoSideInputPrefix();
+    void setCustomerInfoSideInputPrefix(String input);
 }
