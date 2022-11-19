@@ -39,8 +39,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
-
-
 public class ModelPipeline implements Serializable {
     
     ModelPipelineOptions options;

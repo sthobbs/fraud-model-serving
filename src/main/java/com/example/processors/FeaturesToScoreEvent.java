@@ -1,20 +1,17 @@
 package com.example.processors;
 
-import org.apache.beam.sdk.transforms.DoFn;
-
 import com.example.config.ModelPipelineOptions;
 import com.example.storage.Features;
 import com.example.storage.ScoreEvent;
-
 import ml.dmlc.xgboost4j.java.Booster;
 import ml.dmlc.xgboost4j.java.DMatrix;
 import ml.dmlc.xgboost4j.java.XGBoost;
 import ml.dmlc.xgboost4j.java.XGBoostError;
+import org.apache.beam.sdk.transforms.DoFn;
 
 
 public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
     
-
     private Booster booster;
 
     public FeaturesToScoreEvent(ModelPipelineOptions options) {
@@ -49,7 +46,6 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
         catch (XGBoostError e) {
             e.printStackTrace();
         }
-
 
         // put feature values in String for ScoreEvent
         String[] featureValues = new String[data.length];

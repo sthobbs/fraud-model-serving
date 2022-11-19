@@ -1,10 +1,9 @@
 package com.example.storage;
 
-import java.io.Serializable;
-
 import com.example.storage.Action.ActionBuilder;
-
+import java.io.Serializable;
 import lombok.Data;
+
 
 // This class models the raw input data
 @Data

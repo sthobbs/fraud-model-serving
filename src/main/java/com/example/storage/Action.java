@@ -1,9 +1,9 @@
 package com.example.storage;
 
 import java.io.Serializable;
-
 import lombok.Builder;
 import lombok.Data;
+
 
 // This class models an action taken in a session
 @Builder

@@ -2,6 +2,7 @@ package com.example.processors;
 
 import org.apache.beam.sdk.transforms.DoFn;
 
+
 public class ClassToString<T> extends DoFn<T, String> {
     
     @ProcessElement

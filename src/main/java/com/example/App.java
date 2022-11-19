@@ -92,7 +92,6 @@ public class App// implements Serializable
         options.setSdkContainerImage("gcr.io/analog-arbor-367702/model-serving:latest");
 
 
-
         ModelPipeline pipeline = new ModelPipeline(options);
         Pipeline p = pipeline.build();
 

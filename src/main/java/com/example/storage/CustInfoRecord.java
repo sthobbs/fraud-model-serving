@@ -3,6 +3,7 @@ package com.example.storage;
 import java.io.Serializable;
 import lombok.Data;
 
+
 @Data
 public class CustInfoRecord implements Serializable {
     

@@ -1,20 +1,13 @@
 package com.example.processors;
-import java.io.Serializable;
-
-import org.apache.beam.sdk.transforms.Combine.CombineFn;
-// import java.util.ArrayList;
 
 import com.example.storage.Action;
 import com.example.storage.Event;
 import com.example.storage.Session;
-
-// import lombok.Data;
+import java.io.Serializable;
 import lombok.EqualsAndHashCode;
+import org.apache.beam.sdk.transforms.Combine.CombineFn;
 
 
-
-
-// ToDO: can I replace Accum with Session?
 public class SessionCombineFn extends CombineFn<Event, SessionCombineFn.Accum, Session> {
     @EqualsAndHashCode
     public static class Accum implements Serializable {
@@ -58,7 +51,7 @@ public class SessionCombineFn extends CombineFn<Event, SessionCombineFn.Accum, S
         Action action = input.makeAction();
         accum.session.getActions().add(action);
         return accum;
-  }
+    }
 
     @Override
     public Accum mergeAccumulators(Iterable<Accum> accums) {
@@ -99,10 +92,10 @@ public class SessionCombineFn extends CombineFn<Event, SessionCombineFn.Accum, S
         return merged;
     }
 
-  @Override
-  public Session extractOutput(Accum accum) {
-    return accum.session;
-  }
+    @Override
+    public Session extractOutput(Accum accum) {
+        return accum.session;
+    }
 }
 
 

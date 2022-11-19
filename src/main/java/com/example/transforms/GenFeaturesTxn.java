@@ -1,23 +1,17 @@
 package com.example.transforms;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-// import java.util.NoSuchElementException;
-import java.util.Date;
-
 import com.example.storage.Action;
 import com.example.storage.FeaturesTxn;
 import com.example.storage.Transaction;
-
-// import scala.reflect.internal.FlagSets.;
-
-import java.util.Calendar;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Calendar;
+
 
 public class GenFeaturesTxn implements Serializable {
-
-
 
     public static FeaturesTxn process(Transaction txn) {// throws ParseException {
 

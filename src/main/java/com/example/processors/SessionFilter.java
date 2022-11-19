@@ -1,7 +1,8 @@
 package com.example.processors;
 
-import org.apache.beam.sdk.transforms.SerializableFunction;
 import com.example.storage.Session;
+import org.apache.beam.sdk.transforms.SerializableFunction;
+
 
 // Filter Session on those with transactions
 public class SessionFilter implements SerializableFunction<Session, Boolean> {

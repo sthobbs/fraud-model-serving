@@ -2,22 +2,17 @@ package com.example.processors;
 
 import java.util.HashMap;
 
-import org.apache.beam.sdk.transforms.DoFn;
-
-import com.example.GcsHelper;
 import com.example.config.ModelPipelineOptions;
+import com.example.GcsHelper;
 import com.example.storage.CustInfoRecord;
+import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-
-
+import org.apache.beam.sdk.transforms.DoFn;
 
 
 public class LoadCustInfoSideInput extends DoFn<Long, HashMap<String, CustInfoRecord>> {
-
 
     private String localFilePath = "/side_input_customer_info.json";
     private GcsHelper gcsHelper;

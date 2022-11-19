@@ -1,12 +1,11 @@
 package com.example.processors;
 
-import java.util.ArrayList;
-
-import org.apache.beam.sdk.transforms.DoFn;
-// import org.apache.beam.sdk.values.KV;
 import com.example.storage.Action;
 import com.example.storage.Session;
 import com.example.storage.Transaction;
+import java.util.ArrayList;
+import org.apache.beam.sdk.transforms.DoFn;
+
 
 // Convert a Session to Transactions
 public class SessionToTxn extends DoFn<Session, Transaction> {

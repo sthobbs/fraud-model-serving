@@ -1,15 +1,15 @@
 package com.example.transforms;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import com.example.storage.Action;
 import com.example.storage.FeaturesProfile;
 import com.example.storage.ProfileRecord;
 import com.example.storage.Transaction;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
 
 public class GenFeaturesProfile implements Serializable {
 

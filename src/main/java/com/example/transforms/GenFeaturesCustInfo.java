@@ -3,8 +3,8 @@ package com.example.transforms;
 import com.example.storage.CustInfoRecord;
 import com.example.storage.FeaturesCustInfo;
 import com.example.storage.Transaction;
-import java.lang.Math;
 import java.io.Serializable;
+import java.lang.Math;
 
 public class GenFeaturesCustInfo implements Serializable {
     

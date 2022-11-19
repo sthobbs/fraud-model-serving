@@ -1,8 +1,6 @@
 package com.example.storage;
 
 import java.io.Serializable;
-// import java.util.Optional;
-
 import lombok.Data;
 
 
@@ -102,7 +100,4 @@ public class FeaturesProfile implements Serializable {
 
     // Number of distinct recipients they previously sent money to
     long profileDistinctRecipientCount;
-
-
-
 }

@@ -1,8 +1,8 @@
 package com.example.storage;
 
 import java.io.Serializable;
-
 import lombok.Data;
+
 
 @Data
 public class ScoreEvent implements Serializable {
@@ -35,7 +35,5 @@ public class ScoreEvent implements Serializable {
         this.score = score;
         this.featureNamesStr = Features.getFeatureNamesStr();
         this.featureValuesStr = featureValuesStr;
-
     }
-
 }

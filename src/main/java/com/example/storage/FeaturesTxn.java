@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class FeaturesTxn implements Serializable {
 
-
     // non-feature fields
     int fraudLabel;
     String uniqueId;
@@ -70,6 +69,4 @@ public class FeaturesTxn implements Serializable {
 
     // Number of repeated recipients (# txns - # distinct recipients)
     int repeatedRecipientCount;
-
-
 }

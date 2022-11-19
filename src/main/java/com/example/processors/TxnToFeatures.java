@@ -1,10 +1,5 @@
 package com.example.processors;
 
-import java.util.HashMap;
-
-import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.sdk.values.PCollectionView;
-
 import com.example.storage.CustInfoRecord;
 import com.example.storage.Features;
 import com.example.storage.FeaturesCustInfo;
@@ -15,6 +10,10 @@ import com.example.storage.Transaction;
 import com.example.transforms.GenFeaturesCustInfo;
 import com.example.transforms.GenFeaturesProfile;
 import com.example.transforms.GenFeaturesTxn;
+import java.util.HashMap;
+import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.values.PCollectionView;
+
 
 public class TxnToFeatures extends DoFn<Transaction, Features> {
 

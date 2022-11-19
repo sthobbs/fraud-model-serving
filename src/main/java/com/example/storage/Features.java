@@ -2,9 +2,9 @@ package com.example.storage;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-
 import lombok.Data;
 import lombok.Getter;
+
 
 @Data
 public class Features implements Serializable {
