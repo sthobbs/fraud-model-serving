@@ -1,8 +1,7 @@
 package com.example;
 
-import java.io.Serializable;
-
 import com.example.config.ModelPipelineOptions;
+import com.example.processors.ClassToString;
 import com.example.processors.EventToKV;
 import com.example.processors.FeaturesToScoreEvent;
 import com.example.processors.LoadCustInfoSideInput;
@@ -11,37 +10,33 @@ import com.example.processors.SessionCombineFn;
 import com.example.processors.SessionFilter;
 import com.example.processors.SessionToTxn;
 import com.example.processors.TxnToFeatures;
-
-import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.values.PCollection;
-import org.apache.beam.sdk.values.PCollectionView;
-import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
-import org.apache.beam.sdk.io.TextIO;
+import com.example.storage.CustInfoRecord;
 import com.example.storage.Event;
 import com.example.storage.Features;
+import com.example.storage.ProfileRecord;
 import com.example.storage.ScoreEvent;
 import com.example.storage.Session;
 import com.example.storage.Transaction;
-import com.example.storage.CustInfoRecord;
-import com.example.storage.ProfileRecord;
-import org.apache.beam.sdk.io.GenerateSequence;
-import java.util.HashMap;
-
-
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.extensions.jackson.ParseJsons;
-import org.apache.beam.sdk.transforms.DoFn;
+import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
+import org.apache.beam.sdk.io.GenerateSequence;
+import org.apache.beam.sdk.io.TextIO;
+import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.transforms.Combine;
 import org.apache.beam.sdk.transforms.Filter;
 import org.apache.beam.sdk.transforms.ParDo;
-import org.apache.beam.sdk.transforms.Combine;
-import org.apache.beam.sdk.transforms.View;
 import org.apache.beam.sdk.transforms.Values;
+import org.apache.beam.sdk.transforms.View;
 import org.apache.beam.sdk.transforms.windowing.AfterProcessingTime;
 import org.apache.beam.sdk.transforms.windowing.GlobalWindows;
 import org.apache.beam.sdk.transforms.windowing.Repeatedly;
 import org.apache.beam.sdk.transforms.windowing.Window;
+import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionView;
 import org.joda.time.Duration;
-
+import java.io.Serializable;
+import java.util.HashMap;
 
 
 
@@ -49,7 +44,7 @@ import org.joda.time.Duration;
 public class ModelPipeline implements Serializable {
     
     ModelPipelineOptions options;
-
+    
     public ModelPipeline(ModelPipelineOptions options) {
         this.options = options;
     }
@@ -142,18 +137,10 @@ public class ModelPipeline implements Serializable {
 
         scores
             .apply("Convert back to String",
-                ParDo.of(new classToString<ScoreEvent>()))
+                ParDo.of(new ClassToString<ScoreEvent>()))
             .apply(TextIO.write().to(options.getOutputPath()));
 
         return p;
-    }
-
-    static class classToString<T> extends DoFn<T, String> {
-        @ProcessElement
-        public void processElement(@Element T element, OutputReceiver<String> receiver) {
-            String s = element.toString();
-            receiver.output(s);
-        }
     }
 
 }
