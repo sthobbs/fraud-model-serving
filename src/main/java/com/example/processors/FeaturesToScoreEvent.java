@@ -1,9 +1,8 @@
 package com.example.processors;
 
 import org.apache.beam.sdk.transforms.DoFn;
-// import org.apache.beam.sdk.transforms.DoFn.Setup;
-// import import java.lang.Float;
 
+import com.example.config.ModelPipelineOptions;
 import com.example.storage.Features;
 import com.example.storage.ScoreEvent;
 
@@ -18,19 +17,15 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
 
     private Booster booster;
 
-
-    @Setup
-    public void setupDoFn(){
-        // Load XGBoost model
-        // TODO: put model path in config
+    public FeaturesToScoreEvent(ModelPipelineOptions options) {
+        String modelPath = options.getModelPath();
         try {
-            Booster booster = XGBoost.loadModel("model.bin");
+            this.booster = XGBoost.loadModel(modelPath);
         }
         catch (XGBoostError e) {
-            //...
+            e.printStackTrace();
         }
     }
-
 
     @ProcessElement
     public void processElement(@Element Features feats, OutputReceiver<ScoreEvent> receiver) {
@@ -39,11 +34,6 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
         String[] featureNames = Features.getFeatureNames();
         float[] data = new float[featureNames.length];
         for (int i = 0; i < featureNames.length; i++) {
-            // String s = feats.getProperty(featureNames[i]).toString();
-            // Float v = Float.parseFloat(s);
-            // Object s = feats.getProperty(featureNames[i]);
-            // float s = (float) feats.getProperty(featureNames[i]);
-            // Float v = Float.parseFloat(s);
             data[i] = Float.parseFloat(feats.getProperty(featureNames[i]).toString());
         }
         int nrow = 1;
@@ -57,7 +47,7 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
             score = booster.predict(dmat)[0][0];
         }
         catch (XGBoostError e) {
-            //...
+            e.printStackTrace();
         }
 
 
