@@ -9,6 +9,9 @@ import java.util.Date;
 import com.example.storage.Action;
 import com.example.storage.FeaturesTxn;
 import com.example.storage.Transaction;
+
+// import scala.reflect.internal.FlagSets.;
+
 import java.util.Calendar;
 import java.io.Serializable;
 
@@ -26,6 +29,7 @@ public class GenFeaturesTxn implements Serializable {
         feats.setCustomerId(txn.getCustomerId());
         feats.setSessionId(txn.getSessionId());
         feats.setTimestamp(txn.getTimestamp());
+        feats.setAction(txn.getAction());
 
         // Location features
         Double longitude = txn.getLongitude();

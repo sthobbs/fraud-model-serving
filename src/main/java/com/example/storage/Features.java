@@ -20,6 +20,7 @@ public class Features implements Serializable {
     String customerId;
     String sessionId;
     String timestamp;
+    String action;
 
     // Location features
     double longitude;
@@ -315,6 +316,7 @@ public class Features implements Serializable {
         this.customerId = txnFeats.getCustomerId();
         this.sessionId = txnFeats.getSessionId();
         this.timestamp = txnFeats.getTimestamp();
+        this.action = txnFeats.getAction();
         this.longitude = txnFeats.getLongitude();
         this.latitude = txnFeats.getLatitude();
         this.amount = txnFeats.getAmount();

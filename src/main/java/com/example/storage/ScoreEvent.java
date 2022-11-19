@@ -29,6 +29,7 @@ public class ScoreEvent implements Serializable {
         this.customerId = feats.getCustomerId();
         this.sessionId = feats.getSessionId();
         this.timestamp = feats.getTimestamp();
+        this.action = feats.getAction();
         this.amount = feats.getAmount();
         this.modelId = "txn_model.v1"; // TODO: put in config
         this.score = score;

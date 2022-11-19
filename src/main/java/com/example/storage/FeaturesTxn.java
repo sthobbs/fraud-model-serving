@@ -14,6 +14,7 @@ public class FeaturesTxn implements Serializable {
     String customerId;
     String sessionId;
     String timestamp;
+    String action;
 
     // Location features
     double longitude;
