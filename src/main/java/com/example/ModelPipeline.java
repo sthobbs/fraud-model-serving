@@ -31,7 +31,9 @@ import org.apache.beam.sdk.transforms.View;
 import org.apache.beam.sdk.transforms.windowing.AfterProcessingTime;
 import org.apache.beam.sdk.transforms.windowing.GlobalWindows;
 import org.apache.beam.sdk.transforms.windowing.Repeatedly;
+import org.apache.beam.sdk.transforms.windowing.Sessions;
 import org.apache.beam.sdk.transforms.windowing.Window;
+import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.PCollectionView;
 import org.joda.time.Duration;
@@ -59,14 +61,14 @@ public class ModelPipeline implements Serializable {
 
         // Read data
         PCollection<String> records;
-        // ToDO: assert getInputType() in ("disk", "pubsub")
-        if (options.getInputType().equalsIgnoreCase("disk")){
-            records = p.apply("read from disk",
-                TextIO.read().from(options.getInputPath()));
+        // ToDO: assert getInputType() in ("gcs", "pubsub")
+        if (options.getInputType().equalsIgnoreCase("gcs")){
+            records = p.apply("read from gcs",
+                TextIO.read().from(options.getInputGcsPath()));
         }
         else { // if (options.getInputType().equalsIgnoreCase("pubsub")){
             records = p.apply("read from pubsub",
-                PubsubIO.readStrings().fromSubscription(options.getInputPath()));
+                PubsubIO.readStrings().fromSubscription(options.getInputPubsubSubscription()));
         }
 
         // 2. ----- Transform Data -----
@@ -81,6 +83,12 @@ public class ModelPipeline implements Serializable {
         PCollection<Session> sessions = events
             .apply("Convert to KV<SessionId, Event> pairs",
                 ParDo.of(new EventToKV()))
+            .apply("apply session windowing",
+                Window.<KV<String, Event>>into(Sessions.withGapDuration(Duration.standardMinutes(5)))
+                      .triggering(Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane()))
+                      //.discardingFiredPanes()
+                      .accumulatingFiredPanes()
+                      .withAllowedLateness(Duration.standardMinutes(5)))
             .apply("Combine into KV<SessionId, Session> pairs",
                 Combine.<String, Event, Session>perKey(new SessionCombineFn()))
             .apply("Extract Sessions from KV pair",
@@ -132,10 +140,17 @@ public class ModelPipeline implements Serializable {
             .apply("Generate score from features",
                 ParDo.of(new FeaturesToScoreEvent(options)));
 
-        scores
+        PCollection<String> scoresStrings = scores
             .apply("Convert back to String",
-                ParDo.of(new ClassToString<ScoreEvent>()))
-            .apply(TextIO.write().to(options.getOutputPath()));
+                ParDo.of(new ClassToString<ScoreEvent>()));
+
+        if (options.getInputType().equalsIgnoreCase("gcs")){
+            scoresStrings.apply(TextIO.write().to(options.getOutputGcsPath()));
+        }
+        else { // if (options.getInputType().equalsIgnoreCase("pubsub")){
+            scoresStrings.apply("write to pubsub",
+                PubsubIO.writeStrings().to(options.getOutputPubsubTopic()));
+        }
 
         return p;
     }
