@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import lombok.Data;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,6 +14,8 @@ import lombok.Getter;
 @Data
 public class Features implements Serializable {
     
+    private final static Logger logger = LoggerFactory.getLogger(Features.class);
+
     // non-feature fields
     private int fraudLabel;
     private String uniqueId;
@@ -442,7 +446,7 @@ public class Features implements Serializable {
             return field.get(this);
         }
         catch (IllegalAccessException | NoSuchFieldException e) {
-            // TODO: add log
+            logger.error("Error getting field: " + fieldName + ", Error message: " + e.getMessage());
             return null;
         }
     }

@@ -8,12 +8,15 @@ import ml.dmlc.xgboost4j.java.DMatrix;
 import ml.dmlc.xgboost4j.java.XGBoost;
 import ml.dmlc.xgboost4j.java.XGBoostError;
 import org.apache.beam.sdk.transforms.DoFn;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Score Features using XGBoost model and output ScoreEvents.
  */
 public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
+
+    private final static Logger logger = LoggerFactory.getLogger(FeaturesToScoreEvent.class);
 
     private Booster booster;
     private String[] featureNames;
@@ -30,6 +33,7 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
         }
         catch (XGBoostError e) {
             e.printStackTrace();
+            logger.error("Error loading model: " + e.getMessage());
         }
 
         // Get feature names and DMatrix shape
@@ -56,6 +60,7 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
         }
         catch (XGBoostError e) {
             e.printStackTrace();
+            logger.error("Error making DMAtrix or predicting score: " + e.getMessage());
         }
 
         // Put feature values in String for ScoreEvent

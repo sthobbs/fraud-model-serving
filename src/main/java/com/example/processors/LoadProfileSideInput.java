@@ -9,12 +9,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import org.apache.beam.sdk.transforms.DoFn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Load profile from GCS and create a side input.
  */
 public class LoadProfileSideInput extends DoFn<Long, HashMap<String, ProfileRecord>> {
+
+    private final static Logger logger = LoggerFactory.getLogger(LoadProfileSideInput.class);
 
     private String localFilePath = "/side_input_profile.json";
     private GcsHelper gcsHelper;
@@ -25,6 +29,8 @@ public class LoadProfileSideInput extends DoFn<Long, HashMap<String, ProfileReco
 
     @ProcessElement
     public void process(ProcessContext c) {
+
+        logger.info("Generating profile side input...");
 
         // Get pipeline options
         ModelPipelineOptions options = c.getPipelineOptions().as(ModelPipelineOptions.class);
@@ -50,6 +56,7 @@ public class LoadProfileSideInput extends DoFn<Long, HashMap<String, ProfileReco
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error customer info side input: " + e.getMessage());
         }
 
         // Output profile table

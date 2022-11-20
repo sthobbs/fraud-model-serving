@@ -9,12 +9,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * This class generates features that depend on the Transaction and the Profile table
  */
 public class GenFeaturesProfile implements Serializable {
+
+    private final static Logger logger = LoggerFactory.getLogger(GenFeaturesProfile.class);
 
     public static FeaturesProfile process(Transaction txn, ProfileRecord profile) {
 
@@ -59,6 +63,7 @@ public class GenFeaturesProfile implements Serializable {
             }
             catch (ParseException | ArithmeticException e) {
                 feats.setProfileSecondsToTransactionZScore(-1);
+                logger.warn("Error generating profile time features: " + e.getMessage());
             }
         } else {
             feats.setProfileSecondsToTransactionZScore(-1);

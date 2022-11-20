@@ -9,12 +9,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * This class generates features for a transaction
  */
 public class GenFeaturesTxn implements Serializable {
+
+    private final static Logger logger = LoggerFactory.getLogger(GenFeaturesTxn.class);
 
     public static FeaturesTxn process(Transaction txn) {
 
@@ -71,6 +75,7 @@ public class GenFeaturesTxn implements Serializable {
             }
             catch (ParseException e) {
                 feats.setDayOfWeek(-1);
+                logger.warn("Error generating day of week feature: " + e.getMessage());
             }
             // Day of month
             feats.setDayOfMonth(Integer.parseInt(txn.getTimestamp().substring(8,10)));    
@@ -110,6 +115,7 @@ public class GenFeaturesTxn implements Serializable {
         catch (ParseException e) {
             feats.setSecondsToTransaction(-1);
             feats.setAvgActionDuration(-1);
+            logger.warn("Error generating session time duration features: " + e.getMessage());
         }
 
         // Sum/avg/min/max amounts for transactions in session
