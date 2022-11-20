@@ -4,6 +4,9 @@ import java.io.Serializable;
 import lombok.Data;
 
 
+/**
+ * This class contains features that depend on the Transaction and the Profile table
+ */
 @Data
 public class FeaturesProfile implements Serializable {
 
@@ -50,7 +53,7 @@ public class FeaturesProfile implements Serializable {
     private double profileRawMeanSessionAction7Count;
     private double profileRawMeanSessionAction8Count;
     private double profileRawMeanSessionAction9Count;
-    
+
     // Session action count standard deviations
     private double profileRawStdSessionActionCount;
     private double profileRawStdSessionAction0Count;

@@ -10,11 +10,20 @@ import ml.dmlc.xgboost4j.java.XGBoostError;
 import org.apache.beam.sdk.transforms.DoFn;
 
 
+/**
+ * Score Features using XGBoost model and output ScoreEvents.
+ */
 public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
-    
+
     private Booster booster;
+    private String[] featureNames;
+    private int nrow;
+    private int ncol;
+    private float missing = Float.NaN;
 
     public FeaturesToScoreEvent(ModelPipelineOptions options) {
+        
+        // Load model from GCS
         String modelPath = options.getModelPath();
         try {
             this.booster = XGBoost.loadModel(modelPath);
@@ -22,40 +31,42 @@ public class FeaturesToScoreEvent extends DoFn<Features, ScoreEvent> {
         catch (XGBoostError e) {
             e.printStackTrace();
         }
+
+        // Get feature names and DMatrix shape
+        featureNames = Features.getFeatureNames();
+        nrow = 1;
+        ncol = featureNames.length;
     }
 
     @ProcessElement
     public void processElement(@Element Features feats, OutputReceiver<ScoreEvent> receiver) {
 
-        // Create Dmatrix with (one row of) feature data
-        String[] featureNames = Features.getFeatureNames();
+        // Create DMatrix of feature data (with one row)
         float[] data = new float[featureNames.length];
         for (int i = 0; i < featureNames.length; i++) {
             data[i] = Float.parseFloat(feats.getProperty(featureNames[i]).toString());
         }
-        int nrow = 1;
-        int ncol = data.length;
-        float missing = Float.NaN;
         DMatrix dmat;
         Float score = null;
+
+        // Score the DMatrix (i.e. get model prediction)
         try {
             dmat = new DMatrix(data, nrow, ncol, missing);
-            // get prediction
             score = booster.predict(dmat)[0][0];
         }
         catch (XGBoostError e) {
             e.printStackTrace();
         }
 
-        // put feature values in String for ScoreEvent
+        // Put feature values in String for ScoreEvent
         String[] featureValues = new String[data.length];
         for (int i = 0; i < featureNames.length; i++) {
             featureValues[i] = Float.toString(data[i]);
         }
         String featureValuesStr = String.join(", ", featureValues);
-        // make ScoreEvent
+
+        // Make ScoreEvent
         ScoreEvent scoreEvent = new ScoreEvent(feats, score, featureValuesStr);
         receiver.output(scoreEvent);
     }
-        
 }

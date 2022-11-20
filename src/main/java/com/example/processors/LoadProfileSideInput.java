@@ -11,6 +11,9 @@ import java.util.HashMap;
 import org.apache.beam.sdk.transforms.DoFn;
 
 
+/**
+ * Load profile from GCS and create a side input.
+ */
 public class LoadProfileSideInput extends DoFn<Long, HashMap<String, ProfileRecord>> {
 
     private String localFilePath = "/side_input_profile.json";
@@ -23,15 +26,16 @@ public class LoadProfileSideInput extends DoFn<Long, HashMap<String, ProfileReco
     @ProcessElement
     public void process(ProcessContext c) {
 
+        // Get pipeline options
         ModelPipelineOptions options = c.getPipelineOptions().as(ModelPipelineOptions.class);
 
-        // get last object (alphabetically) in gcs, for a given prefix
+        // Get last blob (alphabetically) in gcs, for a given prefix
         String lastBlobName = gcsHelper.lastObjectWithPrefix(options.getProfileSideInputPrefix());
-            
-        // copy side input from GCS to local file on the worker
+
+        // Copy side input from GCS to local file on the worker
         gcsHelper.downloadObject(lastBlobName, localFilePath);
 
-        // load new side input into memory   
+        // Load new side input into a hashmap line-by-line       
         BufferedReader reader;
         Gson gson = new Gson();
         HashMap<String, ProfileRecord> profileMap = new HashMap<String, ProfileRecord>();
@@ -48,7 +52,7 @@ public class LoadProfileSideInput extends DoFn<Long, HashMap<String, ProfileReco
             e.printStackTrace();
         }
 
-        // output profile table
+        // Output profile table
         c.output(profileMap);
     }
 }

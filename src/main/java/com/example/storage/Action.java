@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 
 
-// This class models an action taken in a session
+/**
+ * This class models an action taken in a session
+ */
 @Builder
 @Data
 public class Action implements Serializable {

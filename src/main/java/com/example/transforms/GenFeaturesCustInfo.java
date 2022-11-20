@@ -6,18 +6,22 @@ import com.example.storage.Transaction;
 import java.io.Serializable;
 import java.lang.Math;
 
+
+/**
+ * This class generates features that depend on the Transaction and the Customer Info table
+ */
 public class GenFeaturesCustInfo implements Serializable {
-    
+
     public static FeaturesCustInfo process(Transaction txn, CustInfoRecord cust) {
 
         FeaturesCustInfo feats = new FeaturesCustInfo();
 
         // Age
         feats.setAge(cust.getAge());
-        
+
         // Gender
         feats.setGenderMale(cust.getGender().equals("M") ? 1 : 0);
-        
+
         // Marital Status
         feats.setMaritalStatusSingle(cust.getMaritalStatus().equals("single") ? 1 : 0);
         feats.setMaritalStatusMarried(cust.getMaritalStatus().equals("married") ? 1 : 0);
@@ -30,7 +34,7 @@ public class GenFeaturesCustInfo implements Serializable {
                 || cust.getHomeLatitude() == null
                 || txn.getLongitude() == null
                 ||txn.getLatitude() == null) {
-            // set distance from home to be -1 if we don't have a customer profile
+            // Set distance from home to be -1 if we don't have a customer profile
             feats.setDistanceFromHome(-1);
         }
         else {

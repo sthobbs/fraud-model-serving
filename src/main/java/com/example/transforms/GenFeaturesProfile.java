@@ -11,18 +11,21 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+/**
+ * This class generates features that depend on the Transaction and the Profile table
+ */
 public class GenFeaturesProfile implements Serializable {
 
     public static FeaturesProfile process(Transaction txn, ProfileRecord profile) {
 
         FeaturesProfile feats = new FeaturesProfile();
 
+        // get actions
         ArrayList<Action> actions = txn.getActions();
-        
 
         // Indicator of whether or not we have a profle for this customer
         feats.setProfileRawInd(profile.getCustomerId() == null ? 0 : 1);
-    
+
         // Amount features
         feats.setProfileRawAmountMin(profile.getAmountMin());
         feats.setProfileRawAmountMax(profile.getAmountMax());
@@ -38,7 +41,7 @@ public class GenFeaturesProfile implements Serializable {
         } else {
             feats.setProfileAmountZScore(-1);
         }
-        
+
         // Time between start of session and first transaction
         feats.setProfileRawMeanSecondsToTransaction(profile.getMeanSecondsToTransaction());
         feats.setProfileRawStdSecondsToTransaction(profile.getStdSecondsToTransaction());
@@ -60,7 +63,7 @@ public class GenFeaturesProfile implements Serializable {
         } else {
             feats.setProfileSecondsToTransactionZScore(-1);
         }
-        
+
         // Number of sessions with transactions
         feats.setProfileRawSessionCount(profile.getSessionCount());
 
@@ -252,7 +255,7 @@ public class GenFeaturesProfile implements Serializable {
             feats.setProfileRecipientTxnCount(profile.getRecipients().stream()
                 .filter(s -> s.getRecipient().equals(recipient))
                 .map(s -> s.getTxnCnt())
-                .findFirst().orElse(0)); //.get());
+                .findFirst().orElse(0));
         }
 
         // Number of distinct recipients they previously sent money to
@@ -264,7 +267,7 @@ public class GenFeaturesProfile implements Serializable {
             .distinct()
             .count());
         }
-        
+
         return feats;
     }
 }

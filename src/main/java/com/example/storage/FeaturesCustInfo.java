@@ -4,6 +4,9 @@ import java.io.Serializable;
 import lombok.Data;
 
 
+/**
+ * This class contains features that depend on the Transaction and the Customer Info table
+ */
 @Data
 public class FeaturesCustInfo implements Serializable {
 
@@ -15,5 +18,4 @@ public class FeaturesCustInfo implements Serializable {
     private double homeLongitude;
     private double homeLatitude;
     private double distanceFromHome;
-    
 }

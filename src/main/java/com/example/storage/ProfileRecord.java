@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import lombok.Data;
 
 
+/**
+ * This class models a record from the profile table
+ */
 @Data
 public class ProfileRecord implements Serializable {
 
@@ -73,11 +76,11 @@ public class ProfileRecord implements Serializable {
     // Recipient array
     private ArrayList<Recipient> recipients;
 
+    // Recipient Info Class
     @Data
     public class Recipient implements Serializable {
         private String recipient;
         private int txnCnt;
         private String minTimestamp;
     }
-
 }

@@ -10,27 +10,26 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 
+/**
+ * This class provides helper methods for interacting with Google Cloud Storage
+ */
 public class GcsHelper implements Serializable {
 
     private String projectId;
     private String bucketName;
 
     public GcsHelper(String projectId, String bucketName) {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
-      
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+        // projectId: The ID of your GCP project (e.g. "your-project-id")      
+        // bucketName: The ID of your GCS bucket (e.g. "your-unique-bucket-name")
+
         this.projectId = projectId;
         this.bucketName = bucketName;
     }
 
     // Get last object (alphabetically) in gcs, for a given prefix
     public String lastObjectWithPrefix(String directoryPrefix) {
-      
-        // The directory prefix to search for
-        // String directoryPrefix = "myDirectory/"
-      
+        // directoryPrefix: The directory prefix to search for (e.g. "myDirectory/")
+
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         Page<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(directoryPrefix));
         ArrayList<String> blobNames = new ArrayList<>();
@@ -41,22 +40,16 @@ public class GcsHelper implements Serializable {
         return blobNames.get(blobNames.size() - 1);
     }
 
-    // Copy object from GCS to local file on the worker
+    // Copy object from GCS to local file on the dataflow worker
     public void downloadObject(String objectName, String destFilePath) {
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
-    
-        // The path to which the file should be downloaded
-        // String destFilePath = "/local/path/to/file.txt";
-    
+        // objectName: The ID of your GCS object (e.g. "your-object-name")
+        // destFilePath: The path to which the file should be downloaded
+            // (e.g. "/local/path/to/file.txt")
+
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    
         Blob blob = storage.get(BlobId.of(bucketName, objectName));
         blob.downloadTo(Paths.get(destFilePath));
-    
         System.out.println("Downloaded object " + objectName
                 + " from bucket name " + bucketName + " to " + destFilePath);
     }
-  
-
 }

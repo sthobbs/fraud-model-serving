@@ -4,6 +4,9 @@ import java.io.Serializable;
 import lombok.Data;
 
 
+/**
+ * This class models scored transaction records
+ */
 @Data
 public class ScoreEvent implements Serializable {
 
@@ -19,9 +22,11 @@ public class ScoreEvent implements Serializable {
     private String featureNamesStr;
     private String featureValuesStr;
 
+    // Construct empty ScoreEvent
     public ScoreEvent() {
     }
 
+    // Construct full ScoreEvent
     public ScoreEvent(Features feats, Float score, String featureValuesStr) {
 
         this.fraudLabel = feats.getFraudLabel();

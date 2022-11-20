@@ -15,11 +15,16 @@ import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.values.PCollectionView;
 
 
+/**
+ * Convert Transaction to Features
+ */
 public class TxnToFeatures extends DoFn<Transaction, Features> {
 
+    // Side input hash maps
     private PCollectionView<HashMap<String, ProfileRecord>> profileMap;
-    private PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap;    
+    private PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap;
 
+    // Constructor
     public TxnToFeatures(PCollectionView<HashMap<String, ProfileRecord>> profileMap,
                          PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap) {
         this.profileMap = profileMap;
@@ -29,14 +34,15 @@ public class TxnToFeatures extends DoFn<Transaction, Features> {
     @ProcessElement
     public void process(ProcessContext c) {
         
+        // Get transaction
         Transaction txn = c.element();
         
-        // get profile and customer info side inputs
+        // Get profile and customer info side inputs
         String custId = txn.getCustomerId();
         ProfileRecord profile = c.sideInput(profileMap).get(custId);
         CustInfoRecord custInfo = c.sideInput(custInfoMap).get(custId);
 
-        // if we don't have a profile / cust info on a customer, then make an empty object
+        // If we don't have a profile (or cust info) on a customer, then make an empty record
         if (profile == null) {
             profile = new ProfileRecord();
         }
@@ -44,14 +50,18 @@ public class TxnToFeatures extends DoFn<Transaction, Features> {
             custInfo = new CustInfoRecord();
         }
 
-        // compute features
+        // Compute features that depend solely on the Transaction
         FeaturesTxn txnFeats = GenFeaturesTxn.process(txn);
+
+        // Compute features that depend on the Transaction and the Profile table
         FeaturesProfile profileFeats = GenFeaturesProfile.process(txn, profile);
+
+        // Compute features that depend on the Transaction and the Customer Info table
         FeaturesCustInfo custInfoFeats = GenFeaturesCustInfo.process(txn, custInfo);
 
-        // combine features
+        // Combine features
         Features feats = new Features(txnFeats, profileFeats, custInfoFeats);
 
         c.output(feats); 
-    } 
+    }
 }

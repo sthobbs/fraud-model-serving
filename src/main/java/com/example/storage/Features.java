@@ -6,13 +6,12 @@ import lombok.Data;
 import lombok.Getter;
 
 
+/**
+ * All features are stored in this class
+ */
 @Data
 public class Features implements Serializable {
     
-    // -------------------------------------------------------------------------
-    // Transaction Features
-    // -------------------------------------------------------------------------
-
     // non-feature fields
     private int fraudLabel;
     private String uniqueId;
@@ -20,6 +19,10 @@ public class Features implements Serializable {
     private String sessionId;
     private String timestamp;
     private String action;
+
+    // -------------------------------------------------------------------------
+    // Transaction Features
+    // -------------------------------------------------------------------------
 
     // Location features
     private double longitude;
@@ -186,6 +189,7 @@ public class Features implements Serializable {
     // Feature Names
     // -------------------------------------------------------------------------
 
+    // All feature names
     @Getter
     private static final String[] featureNames = {
         "longitude",
@@ -296,23 +300,28 @@ public class Features implements Serializable {
         "distanceFromHome"
     };
 
+    // All feature names in a comma-separated string
     @Getter
     private static final String featureNamesStr = String.join(", ", featureNames);
 
+    // Empty Constructor
     public Features(){
     }
 
+    // Constructor from the 3 sets of features
     public Features(FeaturesTxn txnFeats,
                     FeaturesProfile profileFeats,
                     FeaturesCustInfo custInfoFeats) {
-        
-        // Transaction Features
+
+        // Non-feature fields
         this.fraudLabel = txnFeats.getFraudLabel();
         this.uniqueId = txnFeats.getUniqueId();
         this.customerId = txnFeats.getCustomerId();
         this.sessionId = txnFeats.getSessionId();
         this.timestamp = txnFeats.getTimestamp();
         this.action = txnFeats.getAction();
+
+        // Transaction Features
         this.longitude = txnFeats.getLongitude();
         this.latitude = txnFeats.getLatitude();
         this.amount = txnFeats.getAmount();
@@ -348,7 +357,7 @@ public class Features implements Serializable {
         this.recipientTransactionCount = txnFeats.getRecipientTransactionCount();
         this.distinctRecipientCount = txnFeats.getDistinctRecipientCount();
         this.repeatedRecipientCount = txnFeats.getRepeatedRecipientCount();
-        
+
         // Profile Features
         this.profileRawInd = profileFeats.getProfileRawInd();
         this.profileRawAmountMin = profileFeats.getProfileRawAmountMin();
@@ -413,7 +422,7 @@ public class Features implements Serializable {
         this.profileSessionTransactionFromCreditCardCountZScore = profileFeats.getProfileSessionTransactionFromCreditCardCountZScore();
         this.profileRecipientTxnCount = profileFeats.getProfileRecipientTxnCount();
         this.profileDistinctRecipientCount = profileFeats.getProfileDistinctRecipientCount();
-        
+
         // Customer Info Features
         this.age = custInfoFeats.getAge();
         this.genderMale = custInfoFeats.getGenderMale();

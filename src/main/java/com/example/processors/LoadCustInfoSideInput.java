@@ -1,7 +1,6 @@
 package com.example.processors;
 
-import java.util.HashMap;
-
+import org.apache.beam.sdk.transforms.DoFn;
 import com.example.config.ModelPipelineOptions;
 import com.example.GcsHelper;
 import com.example.storage.CustInfoRecord;
@@ -9,9 +8,12 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import org.apache.beam.sdk.transforms.DoFn;
+import java.util.HashMap;
 
 
+/**
+ * Load customer info from GCS and create a side input.
+ */
 public class LoadCustInfoSideInput extends DoFn<Long, HashMap<String, CustInfoRecord>> {
 
     private String localFilePath = "/side_input_customer_info.json";
@@ -24,15 +26,16 @@ public class LoadCustInfoSideInput extends DoFn<Long, HashMap<String, CustInfoRe
     @ProcessElement
     public void process(ProcessContext c) {
 
+        // Get pipeline options
         ModelPipelineOptions options = c.getPipelineOptions().as(ModelPipelineOptions.class);
 
-        // get last object (alphabetically) in gcs, for a given prefix
+        // Get last blob (alphabetically) in gcs, for a given prefix
         String lastBlobName = gcsHelper.lastObjectWithPrefix(options.getCustomerInfoSideInputPrefix());
 
-        // copy side input from GCS to local file on the worker
+        // Copy side input from GCS to local file on the worker
         gcsHelper.downloadObject(lastBlobName, localFilePath);
 
-        // load new side input into memory       
+        // Load new side input into a hashmap line-by-line       
         BufferedReader reader;
         Gson gson = new Gson();
         HashMap<String, CustInfoRecord> custInfoMap = new HashMap<String, CustInfoRecord>();
@@ -49,7 +52,7 @@ public class LoadCustInfoSideInput extends DoFn<Long, HashMap<String, CustInfoRe
             e.printStackTrace();
         }
 
-    // output customer info table   
+    // Output customer info table   
     c.output(custInfoMap);
     }
 }

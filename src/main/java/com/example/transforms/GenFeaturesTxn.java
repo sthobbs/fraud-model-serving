@@ -11,13 +11,16 @@ import java.util.Date;
 import java.util.Calendar;
 
 
+/**
+ * This class generates features for a transaction
+ */
 public class GenFeaturesTxn implements Serializable {
 
-    public static FeaturesTxn process(Transaction txn) {// throws ParseException {
+    public static FeaturesTxn process(Transaction txn) {
 
         FeaturesTxn feats = new FeaturesTxn();
 
-        // non-feature fields
+        // Non-feature fields
         feats.setFraudLabel(txn.getFraudLabel());
         feats.setUniqueId(txn.getUniqueId());
         feats.setCustomerId(txn.getCustomerId());
@@ -56,9 +59,9 @@ public class GenFeaturesTxn implements Serializable {
             feats.setDayOfWeek(-1);
             feats.setDayOfMonth(-1);
         } else {
-            // hour
+            // Hour
             feats.setHour(Integer.parseInt(txn.getTimestamp().substring(11,13)));
-            // day of week
+            // Day of week
             try {
                 String txnTimeStr = txn.getTimestamp().substring(0, 23);
                 Date txnTime = new SimpleDateFormat(dateFormat).parse(txnTimeStr);
@@ -69,7 +72,7 @@ public class GenFeaturesTxn implements Serializable {
             catch (ParseException e) {
                 feats.setDayOfWeek(-1);
             }
-            // day of month
+            // Day of month
             feats.setDayOfMonth(Integer.parseInt(txn.getTimestamp().substring(8,10)));    
         }
 
@@ -78,7 +81,7 @@ public class GenFeaturesTxn implements Serializable {
         feats.setAccountTypeChecking(  accountType.equals("checking")    ? 1 : 0);
         feats.setAccountTypeSavings(   accountType.equals("savings")     ? 1 : 0);
         feats.setAccountTypeCreditCard(accountType.equals("credit_card") ? 1 : 0);
-        
+
         // Count of each type of action
         ArrayList<Action> actions = txn.getActions();
         feats.setTransactionCount((int) actions.stream().filter(s -> s.getAction().equals("transaction")).count());
@@ -123,13 +126,6 @@ public class GenFeaturesTxn implements Serializable {
             .filter(s -> s.getAction().equals("transaction"))
             .map(s -> s.getAmount())
             .reduce((double) 0, (a, b) -> (a > b) ? a : b));
-        // feats.setAmountMin((float) actions.stream()
-        //     .filter(s -> s.getAction().equals("transaction"))
-        //     .mapToDouble(s -> s.getAmount()).min().orElseThrow(NoSuchElementException::new));
-        // feats.setAmountMax((float) actions.stream()
-        //     .filter(s -> s.getAction().equals("transaction"))
-        //     .mapToDouble(s -> s.getAmount()).max().orElseThrow(NoSuchElementException::new));
-
 
         // Count transactions to the current recipient in session
         String recipient = txn.getRecipient();
@@ -137,7 +133,7 @@ public class GenFeaturesTxn implements Serializable {
             .filter(s -> s.getAction().equals("transaction")
                 && s.getRecipient().equals(recipient))
             .count());
-        
+
         // Number of distinct recipients
         feats.setDistinctRecipientCount((int) actions.stream()
             .filter(s -> s.getAction().equals("transaction"))
@@ -149,7 +145,5 @@ public class GenFeaturesTxn implements Serializable {
         feats.setRepeatedRecipientCount(feats.getTransactionCount() - feats.getDistinctRecipientCount());
 
         return feats;
-
     }
-    
 }

@@ -4,10 +4,13 @@ import java.io.Serializable;
 import lombok.Data;
 
 
+/**
+ * This class contains features taht depend solely on the Transaction event.
+ */
 @Data
 public class FeaturesTxn implements Serializable {
 
-    // non-feature fields
+    // Non-feature fields
     private int fraudLabel;
     private String uniqueId;
     private String customerId;

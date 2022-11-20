@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import lombok.Data;
 
 
-// This class models a transaction and it's session before the transaction
+/**
+ * This class models a transaction and it's session before the transaction
+ */
 @Data
 public class Transaction implements Serializable {
     private int fraudLabel = 0;

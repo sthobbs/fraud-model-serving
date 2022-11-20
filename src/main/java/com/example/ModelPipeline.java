@@ -39,23 +39,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 
+/**
+ * Build Pipeline
+ */
 public class ModelPipeline implements Serializable {
-    
+
     private ModelPipelineOptions options;
-    
+
     public ModelPipeline(ModelPipelineOptions options) {
         this.options = options;
     }
 
     public Pipeline build() {
-    
+
         // Create the Pipeline object with the options we defined above
         Pipeline p = Pipeline.create(options);
 
+        // 1. ----- Load Data -----
 
-        // 2. ----- Load Data -----
-   
-        // read data
+        // Read data
         PCollection<String> records;
         // ToDO: assert getInputType() in ("disk", "pubsub")
         if (options.getInputType().equalsIgnoreCase("disk")){
@@ -67,7 +69,7 @@ public class ModelPipeline implements Serializable {
                 PubsubIO.readStrings().fromSubscription(options.getInputPath()));
         }
 
-        // 3. ----- Transform Data -----
+        // 2. ----- Transform Data -----
 
         // Parse records into Events
         PCollection<Event> events = records
@@ -75,7 +77,7 @@ public class ModelPipeline implements Serializable {
                 ParseJsons.of(Event.class))
             .setCoder(SerializableCoder.of(Event.class));
 
-        // Combine events into Session
+        // Combine Events into a Session
         PCollection<Session> sessions = events
             .apply("Convert to KV<SessionId, Event> pairs",
                 ParDo.of(new EventToKV()))
@@ -83,8 +85,8 @@ public class ModelPipeline implements Serializable {
                 Combine.<String, Event, Session>perKey(new SessionCombineFn()))
             .apply("Extract Sessions from KV pair",
                 Values.create());
-            
-        // Filter out sessions without transactions
+
+        // Convert Sessions to Transactions
         PCollection<Transaction> txns = sessions
             .apply("Filter out sessions without transactions",
                 Filter.by(new SessionFilter()))
@@ -93,27 +95,24 @@ public class ModelPipeline implements Serializable {
 
         // 3. ----- Side Inputs -----
 
-        // read profile table every hour
-        PCollectionView<HashMap<String, ProfileRecord>> profileMap = p
-            .apply("Generate hourly ticks to trigger profile side input load",
+        // Read profile table every hour
+        PCollection<Long> ticks = p
+            .apply("Generate hourly ticks to trigger side input loads",
                 GenerateSequence.from(0).withRate(1, Duration.standardHours(1L)))
-            .apply("put profile ticks into global window",
+            .apply("put hourly ticks into global window",
                 Window.<Long>into(new GlobalWindows())
                     .triggering(Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane()))
-                    .discardingFiredPanes())
+                    .discardingFiredPanes());
+
+        // Read profile table every hour
+        PCollectionView<HashMap<String, ProfileRecord>> profileMap = ticks
             .apply("load profile table side input",
                 ParDo.of(new LoadProfileSideInput(options)))
             .apply("get PCollectionView for profile table side input",
                 View.asSingleton());
 
-        // read customer info table every hour
-        PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap = p
-            .apply("Generate hourly ticks to trigger customer info side input load",
-                GenerateSequence.from(0).withRate(1, Duration.standardHours(1L)))
-            .apply("put customer info ticks into global window",
-                Window.<Long>into(new GlobalWindows())
-                .triggering(Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane()))
-                .discardingFiredPanes())
+        // Read customer info table every hour
+        PCollectionView<HashMap<String, CustInfoRecord>> custInfoMap = ticks
             .apply("load customer info table side input",
                 ParDo.of(new LoadCustInfoSideInput(options)))
             .apply("get PCollectionView for customer info table side input",
@@ -121,17 +120,17 @@ public class ModelPipeline implements Serializable {
 
         // 4. ----- Generate Features -----
 
-        // generate features that just use transactions
+        // Generate features that just use transactions
         PCollection<Features> features = txns
             .apply("Generate features from transactions",
                 ParDo.of(new TxnToFeatures(profileMap, custInfoMap))
                      .withSideInputs(profileMap, custInfoMap));
 
         // 5. ----- Generate Scores -----
+        
         PCollection<ScoreEvent> scores = features
             .apply("Generate score from features",
                 ParDo.of(new FeaturesToScoreEvent(options)));
-
 
         scores
             .apply("Convert back to String",
@@ -140,5 +139,4 @@ public class ModelPipeline implements Serializable {
 
         return p;
     }
-
 }
