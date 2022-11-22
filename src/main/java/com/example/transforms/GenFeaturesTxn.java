@@ -4,6 +4,8 @@ import com.example.storage.Action;
 import com.example.storage.FeaturesTxn;
 import com.example.storage.Transaction;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class GenFeaturesTxn implements Serializable {
 
         // Location features
         Double longitude = txn.getLongitude();
-        Double latitude = txn.getLongitude();
+        Double latitude = txn.getLatitude();
         feats.setLongitude(longitude == null ? 0 : longitude);
         feats.setLatitude(latitude == null ? 0 : latitude);
 
@@ -48,7 +50,9 @@ public class GenFeaturesTxn implements Serializable {
             feats.setAmountMod500(-1);
             feats.setAmountMod1000(-1);
         } else {
-            int amount100 = (int) (100 * amount);
+            // round 100 * amount to nearest integer
+            long amount100 = new BigDecimal(100 * amount)
+                .setScale(0, RoundingMode.HALF_UP).longValue();
             feats.setAmountMod1(    (float) (amount100 % (100 * 1))    / 100);
             feats.setAmountMod100(  (float) (amount100 % (100 * 100))  / 100);
             feats.setAmountMod250(  (float) (amount100 % (100 * 250))  / 100);
@@ -57,7 +61,7 @@ public class GenFeaturesTxn implements Serializable {
         }
 
         // Transaction time features
-        String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"; // TODO: put in different file
+        String dateFormat = "yyyy-MM-dd HH:mm:ss"; // TODO: put in different file
         if (txn.getTimestamp() == null) {
             feats.setHour(-1);
             feats.setDayOfWeek(-1);
@@ -67,7 +71,7 @@ public class GenFeaturesTxn implements Serializable {
             feats.setHour(Integer.parseInt(txn.getTimestamp().substring(11,13)));
             // Day of week
             try {
-                String txnTimeStr = txn.getTimestamp().substring(0, 23);
+                String txnTimeStr = txn.getTimestamp().substring(0, 19);
                 Date txnTime = new SimpleDateFormat(dateFormat).parse(txnTimeStr);
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(txnTime);
@@ -104,9 +108,9 @@ public class GenFeaturesTxn implements Serializable {
 
         // Total duration and average duration per action
         try {
-            String txnTimeStr = txn.getTimestamp().substring(0, 23);
+            String txnTimeStr = txn.getTimestamp().substring(0, 19);
             Date txnTime = new SimpleDateFormat(dateFormat).parse(txnTimeStr);
-            String loginTimeStr = actions.get(0).getTimestamp().substring(0, 23);
+            String loginTimeStr = actions.get(0).getTimestamp().substring(0, 19);
             Date loginTime = new SimpleDateFormat(dateFormat).parse(loginTimeStr);
             long secondsDiff = (txnTime.getTime() - loginTime.getTime()) / 1000;
             feats.setSecondsToTransaction(secondsDiff);
@@ -127,7 +131,7 @@ public class GenFeaturesTxn implements Serializable {
         feats.setAmountMin(actions.stream()
             .filter(s -> s.getAction().equals("transaction"))
             .map(s -> s.getAmount())
-            .reduce((double) 0, (a, b) -> (a < b) ? a : b));
+            .reduce(amount, (a, b) -> (a < b) ? a : b));
         feats.setAmountMax(actions.stream()
             .filter(s -> s.getAction().equals("transaction"))
             .map(s -> s.getAmount())

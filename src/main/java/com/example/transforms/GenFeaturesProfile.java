@@ -41,7 +41,7 @@ public class GenFeaturesProfile implements Serializable {
         feats.setProfileRawAmountPercentile75(profile.getAmountPercentile75());
         feats.setProfileRawAmountPercentile90(profile.getAmountPercentile90());
         if (profile.getAmountStd() > 0) {
-            feats.setProfileAmountZScore(txn.getAmount() - profile.getAmountAvg() / profile.getAmountStd());
+            feats.setProfileAmountZScore((txn.getAmount() - profile.getAmountAvg()) / profile.getAmountStd());
         } else {
             feats.setProfileAmountZScore(-1);
         }
@@ -49,12 +49,12 @@ public class GenFeaturesProfile implements Serializable {
         // Time between start of session and first transaction
         feats.setProfileRawMeanSecondsToTransaction(profile.getMeanSecondsToTransaction());
         feats.setProfileRawStdSecondsToTransaction(profile.getStdSecondsToTransaction());
-        String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"; // TODO: put in different file
+        String dateFormat = "yyyy-MM-dd HH:mm:ss"; // TODO: put in different file
         if (profile.getStdSecondsToTransaction() > 0) {
             try {
-                String txnTimeStr = txn.getTimestamp().substring(0, 23);
+                String txnTimeStr = txn.getTimestamp().substring(0, 19);
                 Date txnTime = new SimpleDateFormat(dateFormat).parse(txnTimeStr);
-                String loginTimeStr = actions.get(0).getTimestamp().substring(0, 23);
+                String loginTimeStr = actions.get(0).getTimestamp().substring(0, 19);
                 Date loginTime = new SimpleDateFormat(dateFormat).parse(loginTimeStr);
                 Long secondsDiff = (txnTime.getTime() - loginTime.getTime()) / 1000;
                 feats.setProfileSecondsToTransactionZScore(
