@@ -1,7 +1,7 @@
 package com.example;
 
 import com.example.config.ModelPipelineOptions;
-import com.example.processors.ClassToString;
+import com.example.processors.ClassToJsonString;
 import com.example.processors.EventToKV;
 import com.example.processors.FeaturesToScoreEvent;
 import com.example.processors.LoadCustInfoSideInput;
@@ -142,7 +142,7 @@ public class ModelPipeline implements Serializable {
 
         PCollection<String> scoresStrings = scores
             .apply("Convert back to String",
-                ParDo.of(new ClassToString<ScoreEvent>()));
+                ParDo.of(new ClassToJsonString<ScoreEvent>()));
 
         if (options.getInputType().equalsIgnoreCase("gcs")){
             scoresStrings.apply(TextIO.write().to(options.getOutputGcsPath()));
