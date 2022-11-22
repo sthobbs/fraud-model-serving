@@ -1,6 +1,10 @@
 package com.example.storage;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 import lombok.Data;
 
 
@@ -15,6 +19,7 @@ public class ScoreEvent implements Serializable {
     private String customerId;
     private String sessionId;
     private String timestamp;
+    private String scoreTimestamp;
     private String action;
     private Double amount;
     private String modelId;
@@ -40,5 +45,8 @@ public class ScoreEvent implements Serializable {
         this.score = score;
         this.featureNamesStr = Features.getFeatureNamesStr();
         this.featureValuesStr = featureValuesStr;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+                                                       .withZone(ZoneId.systemDefault());
+        this.scoreTimestamp = formatter.format(Instant.now());
     }
 }

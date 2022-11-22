@@ -35,7 +35,7 @@ public class SetupPipelineOptions {
     // Setup pipeline options
     public ModelPipelineOptions setup() throws ConfigurationException {
 
-        // Register interface (to improve documentation of help command)
+        // Register interface (to improve documentation of --help command)
         PipelineOptionsFactory.register(ModelPipelineOptions.class);
 
         // Set execution options for pipeline
@@ -83,7 +83,7 @@ public class SetupPipelineOptions {
         options.setStreaming(config.getBoolean("isStreaming"));
         options.setRegion(config.getString("region"));
         options.setSdkContainerImage(config.getString("sdkContainerImage"));
-        options.setJobName("test-pubsub-to-pubsub" + System.currentTimeMillis());
+        options.setJobName("fraud-detection-" + System.currentTimeMillis());
 
         // Need use_runner_v2 for docker containers for workers (need docker for xgboost dependencies)
         if (options.getSdkContainerImage() != null) {
